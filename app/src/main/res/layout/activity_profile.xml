@@ -39,6 +39,7 @@
                 android:text="Personal Information"/>
 
             <TextView
+                android:id="@+id/txt_name"
                 android:drawableLeft="@drawable/profile_icon"
                 android:layout_width="match_parent"
                 android:drawableTint="#8D8383"
@@ -53,6 +54,7 @@
                 android:text="Abdullah Aqib"/>
 
             <TextView
+                android:id="@+id/txt_phone"
                 android:drawableTint="#8D8383"
                 android:drawableLeft="@drawable/phone_icon"
                 android:layout_width="match_parent"
@@ -66,6 +68,7 @@
                 android:text="03144408616"/>
 
             <TextView
+                android:id="@+id/txt_email"
                 android:drawableTint="#8D8383"
                 android:drawableLeft="@drawable/email_icon"
                 android:layout_width="match_parent"
@@ -79,6 +82,32 @@
                 android:text="abdullahriaz008@gmail.com"/>
 
             <TextView
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:textAllCaps="true"
+                android:text="Settings"/>
+
+            <TextView
+                android:drawableTint="#8D8383"
+                android:drawableLeft="@drawable/settings_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:textSize="18sp"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:drawablePadding="10dp"
+                android:text="Update Information"/>
+
+            <TextView
+                android:id="@+id/txt_logout"
                 android:drawableTint="#8D8383"
                 android:drawableLeft="@drawable/logout_icon"
                 android:layout_width="match_parent"

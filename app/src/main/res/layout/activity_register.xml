@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,7 +38,7 @@
                     android:src="@drawable/logo" />
 
                 <EditText
-                    android:id="@+id/txt_username"
+                    android:id="@+id/txt_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -60,6 +66,20 @@
                     android:textSize="22sp" />
 
                 <EditText
+                    android:id="@+id/txt_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:backgroundTint="@android:color/darker_gray"
+                    android:ems="10"
+                    android:hint="Phone"
+                    android:inputType="phone"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#F7F2F2"
+                    android:textSize="22sp" />
+
+                <EditText
                     android:id="@+id/txt_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,20 +87,6 @@
                     android:backgroundTint="@android:color/darker_gray"
                     android:ems="10"
                     android:hint="Password"
-                    android:inputType="textPassword"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#F7F2F2"
-                    android:textSize="22sp" />
-
-                <EditText
-                    android:id="@+id/txt_confirm_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:ems="10"
-                    android:hint="Confirm Password"
                     android:inputType="textPassword"
                     android:textAlignment="center"
                     android:textColor="#FFFFFF"
@@ -107,7 +113,6 @@
                     android:padding="5dp">
 
                     <TextView
-                        android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="false"
