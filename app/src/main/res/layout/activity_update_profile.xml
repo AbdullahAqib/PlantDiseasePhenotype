@@ -4,12 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".UpdateProfileActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/navbar"
         android:layout_centerInParent="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
@@ -36,9 +35,9 @@
                 android:textStyle="bold"
                 android:textColor="#000000"
                 android:textAllCaps="true"
-                android:text="Personal Information"/>
+                android:text="Update Information"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/txt_name"
                 android:drawableLeft="@drawable/profile_icon"
                 android:layout_width="match_parent"
@@ -53,7 +52,7 @@
                 android:textAllCaps="true"
                 android:text="Abdullah Aqib"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/txt_phone"
                 android:drawableTint="#8D8383"
                 android:drawableLeft="@drawable/phone_icon"
@@ -67,7 +66,7 @@
                 android:drawablePadding="10dp"
                 android:text="03144408616"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/txt_email"
                 android:drawableTint="#8D8383"
                 android:drawableLeft="@drawable/email_icon"
@@ -82,21 +81,9 @@
                 android:text="abdullahriaz008@gmail.com"/>
 
             <TextView
-                android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:paddingLeft="10dp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textAllCaps="true"
-                android:text="Settings"/>
-
-            <TextView
-                android:id="@+id/update_information"
+                android:id="@+id/update_password"
                 android:drawableTint="#8D8383"
-                android:drawableLeft="@drawable/settings_icon"
+                android:drawableLeft="@drawable/password_icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -105,51 +92,20 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:drawablePadding="10dp"
-                android:text="Update Information"/>
+                android:text="Update Password"/>
 
-
-            <TextView
-                android:id="@+id/txt_logout"
-                android:drawableTint="#8D8383"
-                android:drawableLeft="@drawable/logout_icon"
+            <Button
+                android:id="@+id/btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:drawablePadding="10dp"
-                android:text="Logout"/>
-
-            <TextView
-                android:id="@+id/deactivate"
-                android:drawableTint="#DB1212"
-                android:drawableLeft="@drawable/deactivate_icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:textColor="#DB1212"
-                android:paddingLeft="10dp"
-                android:drawablePadding="10dp"
-                android:text="Deactivate Account"/>
+                android:layout_marginTop="20dp"
+                android:background="@drawable/gradient"
+                android:padding="5dp"
+                android:text="Update"
+                android:textSize="22sp"/>
 
         </LinearLayout>
 
-
     </ScrollView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navbar"
-        android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemBackground="@color/colorWhite"
-        app:itemIconTint="#8D8383"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

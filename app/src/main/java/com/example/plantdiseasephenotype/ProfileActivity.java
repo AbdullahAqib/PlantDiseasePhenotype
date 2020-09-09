@@ -1,14 +1,19 @@
 package com.example.plantdiseasephenotype;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     BottomNavigationView navbar;
-    TextView txt_name, txt_email, txt_phone, txt_logout;
+    TextView txt_name, txt_email, txt_phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +37,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txt_name = findViewById(R.id.txt_name);
         txt_email = findViewById(R.id.txt_email);
         txt_phone = findViewById(R.id.txt_phone);
-        txt_logout = findViewById(R.id.txt_logout);
 
-        txt_logout.setOnClickListener(this);
+        findViewById(R.id.txt_logout).setOnClickListener(this);
+        findViewById(R.id.update_information).setOnClickListener(this);
+        findViewById(R.id.deactivate).setOnClickListener(this);
 
         loadUserInformation();
 
@@ -81,7 +87,40 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 break;
+            case R.id.update_information:
+                startActivity(new Intent(getApplicationContext(), UpdateProfileActivity.class));
+                break;
+            case R.id.deactivate:
+                deactivateAccount();
+                break;
         }
+    }
+
+    private void deactivateAccount() {
+
+        final EditText input = new EditText(ProfileActivity.this);
+        input.setHint("Enter Password");
+        input.setGravity(Gravity.CENTER);
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setView(input)
+                .setTitle("Deactivating Account")
+                .setMessage("You can't undo your action. Please conform your identity by entring your password.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set what would happen when positive button is clicked
+                        Toast.makeText(getApplicationContext(), input.getText().toString() , Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set what should happen when negative button is clicked
+                    }
+                })
+                .show();
+
     }
 
     void loadUserInformation() {
@@ -90,7 +129,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
+                        User user;
+                        user = dataSnapshot.getValue(User.class);
                         txt_name.setText(user.name);
                         txt_email.setText(user.email);
                         txt_phone.setText(user.phone);

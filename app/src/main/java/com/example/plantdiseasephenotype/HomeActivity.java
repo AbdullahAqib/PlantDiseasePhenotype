@@ -108,7 +108,6 @@ public class HomeActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }
             });

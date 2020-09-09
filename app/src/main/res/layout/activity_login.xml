@@ -127,7 +127,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/twitter_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -137,21 +137,21 @@
                 app:srcCompat="@drawable/twitter_icon" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/facebook_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"
-                android:layout_toLeftOf="@+id/imageView"
+                android:layout_toLeftOf="@+id/twitter_login"
                 android:layout_weight="1"
                 android:tint="#FFF"
                 app:srcCompat="@drawable/facebook_icon" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/google_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_toRightOf="@+id/imageView"
+                android:layout_toRightOf="@+id/twitter_login"
                 android:layout_weight="1"
                 android:tint="#FFF"
                 app:srcCompat="@drawable/google_icon" />

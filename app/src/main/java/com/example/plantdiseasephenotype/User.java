@@ -1,7 +1,10 @@
 package com.example.plantdiseasephenotype;
 
-public class User {
-    String name, email, phone;
+import java.io.Serializable;
+
+public class User implements Serializable {
+
+    public String name, email, phone;
 
     public User(){}
 

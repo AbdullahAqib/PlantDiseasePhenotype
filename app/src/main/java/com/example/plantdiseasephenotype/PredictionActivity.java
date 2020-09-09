@@ -13,11 +13,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -35,13 +37,15 @@ import java.io.OutputStream;
 public class PredictionActivity extends AppCompatActivity {
     private static int RESULT_LOAD_IMAGE = 1;
 
+    TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prediction);
-
         BottomNavigationView navbar;
 
+        textView = findViewById(R.id.result_text);
         navbar = findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_prediction);
 
@@ -78,7 +82,7 @@ public class PredictionActivity extends AppCompatActivity {
 
 
         ImageView imageView = findViewById(R.id.image);
-        Button detectButton = (Button) findViewById(R.id.detect);
+        Button detectButton = findViewById(R.id.detect);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,15 +92,12 @@ public class PredictionActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                TextView textView = findViewById(R.id.result_text);
                 textView.setText("");
                 Intent i = new Intent(
                         Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
-
-
             }
         });
 
@@ -114,6 +115,7 @@ public class PredictionActivity extends AppCompatActivity {
                 try {
                     //Read the image as Bitmap
                     bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
 
                     //Here we reshape the image into 400*400
                     bitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
@@ -150,8 +152,8 @@ public class PredictionActivity extends AppCompatActivity {
                 String detected_class = ModelClasses.MODEL_CLASSES[ms_ix];
 
                 //Writing the detected class in to the text view of the layout
-                TextView textView = findViewById(R.id.result_text);
                 textView.setText(detected_class);
+                Log.i("Msg", detected_class);
             }
         });
 

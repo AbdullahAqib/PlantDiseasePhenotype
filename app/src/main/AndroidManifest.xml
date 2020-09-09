@@ -19,43 +19,38 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ProfileActivity"
-            android:noHistory="true">
+        <activity android:name=".UpdateProfileActivity" />
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".PredictionActivity" >
 
         </activity>
-        <activity android:name=".PredictionActivity"
-            android:noHistory="true"
-            >
-
-        </activity>
-        <activity android:name=".DetailActivity"
-            android:noHistory="true"/>
-        <activity android:name=".BlogActivity"
-            android:noHistory="true">
-
-        </activity>
+        <activity
+            android:name=".DetailActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".BlogActivity"
+            android:noHistory="true" />
         <activity android:name=".SplashScreen" />
         <activity
             android:name=".RegisterActivity"
             android:noHistory="true"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" >
-
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".LoginActivity"
             android:noHistory="true"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity">
+        <activity android:name=".HomeActivity" />
+        <activity android:name=".CameraActivity" >
 
         </activity>
-        <activity android:name=".CameraActivity"
-            android:noHistory="true"/>
     </application>
 
 </manifest>

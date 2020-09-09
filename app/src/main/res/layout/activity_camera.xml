@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/navbar"
         android:layout_centerHorizontal="true"
-        android:onClick="captureImage"
         android:padding="10dp"
         android:tint="#FFF"
         app:srcCompat="@drawable/capture_icon_64p" />
