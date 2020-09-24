@@ -1,40 +1,26 @@
 package com.example.plantdiseasephenotype;
 
-import android.content.Context;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.media.ExifInterface;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener{
 
     FrameLayout preview;
     ImageView buttonCapture;
@@ -45,131 +31,95 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        BottomNavigationView navbar;
-
-        navbar = findViewById(R.id.navbar);
-        navbar.setSelectedItemId(R.id.nav_camera);
-
-        navbar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_camera:
-                        return true;
-                    case R.id.nav_prediction:
-                        startActivity(new Intent(getApplicationContext(), PredictionActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_blogs:
-                        startActivity(new Intent(getApplicationContext(), BlogActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_profile:
-                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                }
-                return false;
-            }
-        });
-
-
-        preview = findViewById(R.id.framelayout);
-        buttonCapture = findViewById(R.id.button_capture);
-
-        buttonCapture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                captureImage(view);
-            }
-        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+        }
 
         camera = getCameraInstance();
-
         cameraPreview = new CameraPreview(this, camera);
-
+        preview = findViewById(R.id.framelayout);
         preview.addView(cameraPreview);
 
+        findViewById(R.id.button_capture).setOnClickListener(this);
+
+        BottomNavigationView navbar = findViewById(R.id.navbar);
+        navbar.setSelectedItemId(R.id.nav_camera);
+        navbar.setOnNavigationItemSelectedListener(this);
     }
 
-
-    /**
-     * A safe way to get an instance of the Camera object.
-     */
     public static Camera getCameraInstance() {
         Camera c = null;
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            c = Camera.open();
         } catch (Exception e) {
-            // Camera is not available (in use or does not exist)
+            //Camera Not Exist or in use
         }
-        return c; // returns null if camera is unavailable
+        return c;
     }
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
+            Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
 
-            File pictureFile = getOutputMediaFile();
-            if (pictureFile == null) {
-                return;
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-                Toast.makeText(CameraActivity.this, "Image Stored", Toast.LENGTH_SHORT).show();
-                scanFile(pictureFile.toString());
-                camera.startPreview();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Intent intent = new Intent(getApplicationContext(), PredictionActivity.class);
+            PredictionActivity.bitmap = rotatedBitmap;
+            startActivity(intent);
         }
     };
 
-    private void scanFile(String path) {
-
-        MediaScannerConnection.scanFile(CameraActivity.this,
-                new String[]{path}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.d("Msg", "Finished scanning " + path);
-                    }
-                });
-    }
-
-    private static File getOutputMediaFile(){
-
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "PlantDiseasePhenotype");
-
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("MyCameraApp", "failed to create directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-
-        return mediaFile;
-    }
-
     public void captureImage(View view) {
         camera.takePicture(null, null, mPicture);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (!(ActivityCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)){
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_camera:
+                return true;
+            case R.id.nav_prediction:
+                startActivity(new Intent(getApplicationContext(), PredictionActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_home:
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_blogs:
+                startActivity(new Intent(getApplicationContext(), BlogActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_profile:
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button_capture:
+                captureImage(view);
+                break;
+        }
     }
 }

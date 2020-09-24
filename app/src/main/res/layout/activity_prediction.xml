@@ -27,7 +27,7 @@
                 android:layout_height="400dp"
                 android:layout_alignParentTop="true"
                 android:background="#81191A19"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/camera_icon" />
 
             <TextView

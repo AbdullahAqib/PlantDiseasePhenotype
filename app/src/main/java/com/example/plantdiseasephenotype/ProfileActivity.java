@@ -1,22 +1,16 @@
 package com.example.plantdiseasephenotype;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,9 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
-    BottomNavigationView navbar;
     TextView txt_name, txt_email, txt_phone;
 
     @Override
@@ -42,42 +35,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.update_information).setOnClickListener(this);
         findViewById(R.id.deactivate).setOnClickListener(this);
 
-        loadUserInformation();
-
-        navbar = findViewById(R.id.navbar);
+        BottomNavigationView navbar = findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_profile);
+        navbar.setOnNavigationItemSelectedListener(this);
 
-        navbar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_camera:
-                        startActivity(new Intent(getApplicationContext(), CameraActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_prediction:
-                        startActivity(new Intent(getApplicationContext(), PredictionActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_blogs:
-                        startActivity(new Intent(getApplicationContext(), BlogActivity.class));
-                        overridePendingTransition(0, 0);
-                        finish();
-                        return true;
-                    case R.id.nav_profile:
-                        return true;
-                }
-                return false;
-            }
-        });
-
+        loadUserInformation();
     }
 
     @Override
@@ -98,28 +60,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void deactivateAccount() {
 
-        final EditText input = new EditText(ProfileActivity.this);
-        input.setHint("Enter Password");
-        input.setGravity(Gravity.CENTER);
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setView(input)
-                .setTitle("Deactivating Account")
-                .setMessage("You can't undo your action. Please conform your identity by entring your password.")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //set what would happen when positive button is clicked
-                        Toast.makeText(getApplicationContext(), input.getText().toString() , Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //set what should happen when negative button is clicked
-                    }
-                })
-                .show();
+        DeactivateAccountDialog dialog = new DeactivateAccountDialog(ProfileActivity.this);
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
     }
 
@@ -143,4 +88,32 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 });
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_camera:
+                startActivity(new Intent(getApplicationContext(), CameraActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_prediction:
+                startActivity(new Intent(getApplicationContext(), PredictionActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_home:
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_blogs:
+                startActivity(new Intent(getApplicationContext(), BlogActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            case R.id.nav_profile:
+                return true;
+        }
+        return false;
+    }
 }

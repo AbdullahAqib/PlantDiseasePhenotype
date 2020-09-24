@@ -19,90 +19,92 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/logo"
-                />
+                android:src="@drawable/logo" />
 
             <TextView
-                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:textSize="20sp"
+                android:gravity="center_horizontal"
                 android:paddingLeft="10dp"
-                android:textStyle="bold"
-                android:textColor="#000000"
+                android:text="Update Information"
                 android:textAllCaps="true"
-                android:text="Update Information"/>
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txt_name"
-                android:drawableLeft="@drawable/profile_icon"
                 android:layout_width="match_parent"
-                android:drawableTint="#8D8383"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
-                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/profile_icon"
+                android:drawablePadding="10dp"
+                android:drawableTint="#8D8383"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
-                android:drawablePadding="10dp"
+                android:text="Abdullah Aqib"
                 android:textAllCaps="true"
-                android:text="Abdullah Aqib"/>
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/txt_phone"
-                android:drawableTint="#8D8383"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:drawableLeft="@drawable/phone_icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
                 android:drawablePadding="10dp"
-                android:text="03144408616"/>
-
-            <EditText
-                android:id="@+id/txt_email"
                 android:drawableTint="#8D8383"
-                android:drawableLeft="@drawable/email_icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:textSize="18sp"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
+                android:text="03144408616"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/update_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/email_icon"
                 android:drawablePadding="10dp"
-                android:text="abdullahriaz008@gmail.com"/>
+                android:drawableTint="#8D8383"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Update Email"
+                android:textSize="18sp" />
+
 
             <TextView
                 android:id="@+id/update_password"
-                android:drawableTint="#8D8383"
-                android:drawableLeft="@drawable/password_icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_gravity="center"
-                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/password_icon"
+                android:drawablePadding="10dp"
+                android:drawableTint="#8D8383"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
-                android:drawablePadding="10dp"
-                android:text="Update Password"/>
+                android:text="Update Password"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/gradient"
                 android:padding="5dp"
                 android:text="Update"
-                android:textSize="22sp"/>
+                android:textSize="22sp" />
 
         </LinearLayout>
 

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     public static String AppId = "4dfbee4b454ab2aa20215eb57c73c7a1";
     public static String lat = null;
@@ -53,45 +52,16 @@ public class HomeActivity extends AppCompatActivity {
         txt_date = findViewById(R.id.txt_date);
         txt_meridiem = findViewById(R.id.txt_meridiem);
 
-        BottomNavigationView navbar;
-
-        navbar = findViewById(R.id.navbar);
-        navbar.setSelectedItemId(R.id.nav_home);
-
-        navbar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_camera:
-                        startActivity(new Intent(getApplicationContext(), CameraActivity.class));
-                        overridePendingTransition(0, 0);
-                        return true;
-                    case R.id.nav_prediction:
-                        startActivity(new Intent(getApplicationContext(), PredictionActivity.class));
-                        overridePendingTransition(0, 0);
-                        return true;
-                    case R.id.nav_home:
-                        return true;
-                    case R.id.nav_blogs:
-                        startActivity(new Intent(getApplicationContext(), BlogActivity.class));
-                        overridePendingTransition(0, 0);
-                        return true;
-                    case R.id.nav_profile:
-                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                        overridePendingTransition(0, 0);
-                        return true;
-                }
-                return false;
-            }
-        });
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setLocation();
         setTimeAndDate();
+
+        BottomNavigationView navbar = findViewById(R.id.navbar);
+        navbar.setSelectedItemId(R.id.nav_home);
+        navbar.setOnNavigationItemSelectedListener(this);
     }
 
     void setLocation(){
-        Log.i("Print Msg 1", "Set Location Called");
         if (ActivityCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                 @Override
@@ -117,9 +87,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     void setTimeAndDate() {
-        Date today = new Date(); // Fri Jun 17 14:54:28 PDT 2016
+        Date today = new Date();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(today); // don't forget this if date is arbitrary e.g. 01-01-2014
+        cal.setTime(today);
 
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
@@ -165,4 +135,28 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_camera:
+                startActivity(new Intent(getApplicationContext(), CameraActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            case R.id.nav_prediction:
+                startActivity(new Intent(getApplicationContext(), PredictionActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            case R.id.nav_home:
+                return true;
+            case R.id.nav_blogs:
+                startActivity(new Intent(getApplicationContext(), BlogActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            case R.id.nav_profile:
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+        }
+        return false;
+    }
 }

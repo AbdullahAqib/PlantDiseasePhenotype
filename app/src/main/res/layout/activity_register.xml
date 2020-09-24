@@ -59,7 +59,7 @@
                     android:backgroundTint="@android:color/darker_gray"
                     android:ems="10"
                     android:hint="Email "
-                    android:inputType="textPersonName"
+                    android:inputType="textEmailAddress"
                     android:textAlignment="center"
                     android:textColor="#FFFFFF"
                     android:textColorHint="#F7F2F2"

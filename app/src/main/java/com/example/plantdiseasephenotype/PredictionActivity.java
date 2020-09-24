@@ -2,9 +2,12 @@ package com.example.plantdiseasephenotype;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,13 +16,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -34,129 +35,37 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class PredictionActivity extends AppCompatActivity {
+public class PredictionActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private static int RESULT_LOAD_IMAGE = 1;
 
+    public static Bitmap bitmap = null;
+
     TextView textView;
+    ImageView imageView;
+    Button detectButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prediction);
-        BottomNavigationView navbar;
-
-        textView = findViewById(R.id.result_text);
-        navbar = findViewById(R.id.navbar);
-        navbar.setSelectedItemId(R.id.nav_prediction);
-
-        navbar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_camera:
-                        startActivity(new Intent(getApplicationContext(), CameraActivity.class));
-                        overridePendingTransition(0,0);
-                        finish();
-                        return true;
-                    case R.id.nav_prediction:
-                        return true;
-                    case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                        overridePendingTransition(0,0);
-                        finish();
-                        return true;
-                    case R.id.nav_blogs:
-                        startActivity(new Intent(getApplicationContext(), BlogActivity.class));
-                        overridePendingTransition(0,0);
-                        finish();
-                        return true;
-                    case R.id.nav_profile:
-                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                        overridePendingTransition(0,0);
-                        finish();
-                        return true;
-                }
-                return false;
-            }
-        });
-
-
-        ImageView imageView = findViewById(R.id.image);
-        Button detectButton = findViewById(R.id.detect);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
-        imageView.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                textView.setText("");
-                Intent i = new Intent(
-                        Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imageView = findViewById(R.id.image);
+        textView = findViewById(R.id.result_text);
+        findViewById(R.id.detect).setOnClickListener(this);
+        imageView.setOnClickListener(this);
 
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
-            }
-        });
+        if(bitmap!=null){
+            imageView.setImageBitmap(bitmap);
+            bitmap = null;
+        }
 
-        detectButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                Bitmap bitmap = null;
-                Module module = null;
-
-                //Getting the image from the image view
-                ImageView imageView = (ImageView) findViewById(R.id.image);
-
-                try {
-                    //Read the image as Bitmap
-                    bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-
-
-                    //Here we reshape the image into 400*400
-                    bitmap = Bitmap.createScaledBitmap(bitmap, 400, 400, true);
-
-                    //Loading the model file.
-                    module = Module.load(fetchModelFile(PredictionActivity.this, "resnet18_traced.pt"));
-                } catch (IOException e) {
-                    finish();
-                }
-
-                //Input Tensor
-                final Tensor input = TensorImageUtils.bitmapToFloat32Tensor(
-                        bitmap,
-                        TensorImageUtils.TORCHVISION_NORM_MEAN_RGB,
-                        TensorImageUtils.TORCHVISION_NORM_STD_RGB
-                );
-
-                //Calling the forward of the model to run our input
-                final Tensor output = module.forward(IValue.from(input)).toTensor();
-
-                final float[] score_arr = output.getDataAsFloatArray();
-
-                // Fetch the index of the value with maximum score
-                float max_score = -Float.MAX_VALUE;
-                int ms_ix = -1;
-                for (int i = 0; i < score_arr.length; i++) {
-                    if (score_arr[i] > max_score) {
-                        max_score = score_arr[i];
-                        ms_ix = i;
-                    }
-                }
-
-                //Fetching the name from the list based on the index
-                String detected_class = ModelClasses.MODEL_CLASSES[ms_ix];
-
-                //Writing the detected class in to the text view of the layout
-                textView.setText(detected_class);
-                Log.i("Msg", detected_class);
-            }
-        });
-
+        BottomNavigationView navbar = findViewById(R.id.navbar);
+        navbar.setSelectedItemId(R.id.nav_prediction);
+        navbar.setOnNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -182,11 +91,7 @@ public class PredictionActivity extends AppCompatActivity {
             //Setting the URI so we can read the Bitmap from the image
             imageView.setImageURI(null);
             imageView.setImageURI(selectedImage);
-
-
         }
-
-
     }
 
     public static String fetchModelFile(Context context, String modelName) throws IOException {
@@ -208,4 +113,110 @@ public class PredictionActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (!(ActivityCompat.checkSelfPermission(PredictionActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)){
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_camera:
+                startActivity(new Intent(getApplicationContext(), CameraActivity.class));
+                overridePendingTransition(0,0);
+                finish();
+                return true;
+            case R.id.nav_prediction:
+                return true;
+            case R.id.nav_home:
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                overridePendingTransition(0,0);
+                finish();
+                return true;
+            case R.id.nav_blogs:
+                startActivity(new Intent(getApplicationContext(), BlogActivity.class));
+                overridePendingTransition(0,0);
+                finish();
+                return true;
+            case R.id.nav_profile:
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(0,0);
+                finish();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.image:
+                pickImageFromGallery();
+                break;
+            case R.id.detect:
+                detectImage();
+        }
+    }
+
+    private void detectImage() {
+        Bitmap bitmap = null;
+        Module module = null;
+
+        //Getting the image from the image view
+        try {
+            //Read the image as Bitmap
+            bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+            //Here we reshape the image into 400*400
+            bitmap = Bitmap.createScaledBitmap(bitmap, 299, 299, true);
+
+            //Loading the model file.
+            module = Module.load(fetchModelFile(PredictionActivity.this, "plant_disease_model.pt"));
+        } catch (IOException e) {
+            finish();
+        }
+
+        //Input Tensor
+        final Tensor input = TensorImageUtils.bitmapToFloat32Tensor(
+                bitmap,
+                TensorImageUtils.TORCHVISION_NORM_MEAN_RGB,
+                TensorImageUtils.TORCHVISION_NORM_STD_RGB
+        );
+
+        //Calling the forward of the model to run our input
+        final IValue[] outputTuple = module.forward(IValue.from(input)).toTuple();
+
+        final Tensor output = outputTuple[0].toTensor();
+
+        final float[] score_arr = output.getDataAsFloatArray();
+
+        // Fetch the index of the value with maximum score
+        float max_score = -Float.MAX_VALUE;
+        int ms_ix = -1;
+        for (int i = 0; i < score_arr.length; i++) {
+            if (score_arr[i] > max_score) {
+                max_score = score_arr[i];
+                ms_ix = i;
+            }
+        }
+
+        //Fetching the name from the list based on the index
+        String detected_class = ModelClasses.MODEL_CLASSES[ms_ix];
+
+        //Writing the detected class in to the text view of the layout
+        textView.setText(detected_class);
+    }
+
+    private void pickImageFromGallery() {
+        textView.setText("");
+        Intent i = new Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(i, RESULT_LOAD_IMAGE);
+    }
 }

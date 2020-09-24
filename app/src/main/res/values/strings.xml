@@ -10,5 +10,7 @@
     <string name="registration_success">Registered Successfully</string>
     <string name="input_error_email_invalid">enter a valid email</string>
 
+    <string name="facebook_app_id">773281199900922</string>
+    <string name="fb_login_protocol_scheme">fb773281199900922</string>
 
 </resources>

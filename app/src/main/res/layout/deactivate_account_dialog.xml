@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffffff">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:background="#DA5F6A"
+        android:src="@drawable/warning_icon"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deactivating Account"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="26sp"
+        android:textColor="#ff000000"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You can't undo your action. Please conform your identity by entring your password."
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="14sp"
+        android:padding="10dp"
+        android:textColor="#ff000000"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center" />
+
+    <EditText
+        android:id="@+id/txt_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Enter Password"
+        android:inputType="textPassword"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp">
+
+        <Button
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Cancel"
+            android:id="@+id/btn_cancel"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="#DA5F6A"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Deactivate"
+            android:id="@+id/btn_deactivate"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="#DA5F6A"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffffff" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
