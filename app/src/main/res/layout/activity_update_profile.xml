@@ -23,7 +23,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/logo" />
+                android:contentDescription="TODO" android:src="@drawable/logo" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="#8D8383"
                 android:gravity="center_vertical"
-                android:paddingLeft="10dp"
+                android:inputType="" android:paddingLeft="10dp"
                 android:text="Abdullah Aqib"
                 android:textAllCaps="true"
                 android:textSize="18sp" />
@@ -62,7 +62,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="#8D8383"
                 android:gravity="center_vertical"
-                android:paddingLeft="10dp"
+                android:inputType="" android:paddingLeft="10dp"
                 android:text="03144408616"
                 android:textSize="18sp" />
 
