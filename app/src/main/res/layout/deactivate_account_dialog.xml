@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:gravity="center"
+        android:contentDescription="TODO" android:gravity="center"
         android:background="#DA5F6A"
         android:src="@drawable/warning_icon"
         android:scaleType="fitCenter" />
