@@ -2,26 +2,38 @@ package com.example.plantdiseasephenotype;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+
 import androidx.core.app.ActivityCompat;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -61,7 +73,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         navbar.setOnNavigationItemSelectedListener(this);
     }
 
-    void setLocation(){
+    void setLocation() {
         if (ActivityCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                 @Override
@@ -112,7 +124,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
 
     void getWeatherData() {
-        Call<WeatherResponse> call = WeatherAPI.getWeatherService().getCurrentWeatherData(lat, lon, AppId);
+        Call<WeatherResponse> call = WeatherAPI.getWeatherService().getCurrentWeatherData(lat, lon, AppId, "metric");
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {
@@ -122,7 +134,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
                     Glide.with(getApplicationContext()).load("http://openweathermap.org/img/w/" + weatherResponse.weather.get(0).icon + ".png").into(weather_icon);
                     txt_temperature.setText(String.valueOf(weatherResponse.main.temp) + "°");
-                    txt_hum_pres.setText(String.valueOf(weatherResponse.main.humidity) + "°/" + String.valueOf(weatherResponse.main.pressure) + "°");
+                    txt_hum_pres.setText(String.valueOf(weatherResponse.main.humidity) + "% / " + String.valueOf(weatherResponse.main.pressure) + " hPa");
 
                 }
             }
