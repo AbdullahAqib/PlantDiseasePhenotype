@@ -7,7 +7,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:gravity="center"
+        android:contentDescription="TODO" android:gravity="center"
         android:src="@drawable/email_icon_64dp"
         android:tint="@color/cardview_dark_background"
         android:scaleType="fitCenter" />

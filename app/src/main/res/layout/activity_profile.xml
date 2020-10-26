@@ -30,7 +30,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/logo"
+                android:contentDescription="TODO" android:src="@drawable/logo"
                 />
 
             <TextView

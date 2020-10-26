@@ -30,14 +30,14 @@
                 <LinearLayout
                     android:id="@+id/time_details"
                     android:layout_width="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end">
 
                     <TextClock
-                        android:format12Hour="hh:mm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
+                        android:format12Hour="hh:mm"
                         android:textSize="46sp" />
 
                     <TextView
@@ -63,8 +63,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:text="London"
                     android:drawableRight="@drawable/location_icon"
+                    android:text="London"
                     android:textSize="16sp" />
 
 
@@ -92,7 +92,8 @@
                 <ImageView
                     android:id="@+id/weather_icon"
                     android:layout_width="match_parent"
-                    android:layout_height="75dp" />
+                    android:layout_height="75dp"
+                    android:contentDescription="TODO" />
 
 
                 <TextView
@@ -122,11 +123,11 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navbar"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        app:itemBackground="@color/colorWhite"
         app:itemIconTint="#8D8383"
         app:menu="@menu/bottom_nav_menu" />
 

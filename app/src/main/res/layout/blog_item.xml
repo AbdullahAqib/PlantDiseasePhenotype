@@ -14,7 +14,7 @@
 
         <ImageView
             android:id="@+id/blog_image"
-            android:scaleType="centerCrop"
+            android:contentDescription="TODO" android:scaleType="centerCrop"
             android:layout_width="match_parent"
             android:layout_height="180dp" />
 
