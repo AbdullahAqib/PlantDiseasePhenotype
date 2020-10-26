@@ -12,9 +12,9 @@ public class WeatherAPI {
 
     public static WeatherService weatherService = null;
 
-    public static WeatherService getWeatherService(){
+    public static WeatherService getWeatherService() {
 
-        if(weatherService == null){
+        if (weatherService == null) {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -28,6 +28,6 @@ public class WeatherAPI {
 
     public interface WeatherService {
         @GET("data/2.5/weather?")
-        Call<WeatherResponse> getCurrentWeatherData(@Query("lat") String lat, @Query("lon") String lon, @Query("APPID") String app_id);
+        Call<WeatherResponse> getCurrentWeatherData(@Query("lat") String lat, @Query("lon") String lon, @Query("APPID") String app_id, @Query("units") String units);
     }
 }

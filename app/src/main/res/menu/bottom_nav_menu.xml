@@ -1,18 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_camera"
+    <item
+        android:id="@+id/nav_camera"
         android:icon="@drawable/camera_icon"
         android:title="" />
-    <item android:id="@+id/nav_prediction"
-        android:title=""
-        android:icon="@drawable/predict_icon" />
-    <item android:id="@+id/nav_home"
-        android:title=""
-        android:icon="@drawable/home_icon" />
-    <item android:id="@+id/nav_blogs"
-        android:title=""
-        android:icon="@drawable/blogs"/>
-    <item android:id="@+id/nav_profile"
-        android:title=""
+    <item
+        android:id="@+id/nav_prediction"
+        android:icon="@drawable/predict_icon"
+        android:title="" />
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home_icon"
+        android:title="" />
+    <item
+        android:id="@+id/nav_blogs"
+        android:icon="@drawable/blogs"
+        android:title="" />
+    <item
+        android:id="@+id/nav_profile"
         android:icon="@drawable/profile_icon"
-        />
+        android:title="" />
 </menu>
