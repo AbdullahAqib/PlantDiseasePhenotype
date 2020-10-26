@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
 
     void getWeatherData() {
-        Call<WeatherResponse> call = WeatherAPI.getWeatherService().getCurrentWeatherData(lat, lon, AppId);
+        Call<WeatherResponse> call = WeatherAPI.getWeatherService(getApplicationContext()).getCurrentWeatherData(lat, lon, AppId);
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {

@@ -55,11 +55,12 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         imageView = findViewById(R.id.image);
         textView = findViewById(R.id.result_text);
-        findViewById(R.id.detect).setOnClickListener(this);
+        detectButton = findViewById(R.id.detect);
         imageView.setOnClickListener(this);
 
         if(bitmap!=null){
             imageView.setImageBitmap(bitmap);
+            detectButton.setOnClickListener(this);
             bitmap = null;
         }
 
@@ -85,12 +86,13 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            ImageView imageView = (ImageView) findViewById(R.id.image);
             imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
             //Setting the URI so we can read the Bitmap from the image
             imageView.setImageURI(null);
             imageView.setImageURI(selectedImage);
+
+            detectButton.setOnClickListener(this);
         }
     }
 
@@ -209,6 +211,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         //Writing the detected class in to the text view of the layout
         textView.setText(detected_class);
+        detectButton.setOnClickListener(null);
     }
 
     private void pickImageFromGallery() {

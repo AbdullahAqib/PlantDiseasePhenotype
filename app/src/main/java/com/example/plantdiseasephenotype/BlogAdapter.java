@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,20 +19,21 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
-import static com.example.plantdiseasephenotype.R.*;
 import static com.example.plantdiseasephenotype.R.id.*;
 
-public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHolder> {
+public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHolder> implements Filterable {
 
     private Context context;
     private List<Item> items;
+    private List<Item> allItems;
 
     public BlogAdapter(Context context, List<Item> items) {
         this.context = context;
         this.items = items;
+        allItems = new ArrayList<>(items);
     }
 
     @NonNull
@@ -78,4 +81,34 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHo
             blogDescription = itemView.findViewById(blog_description);
         }
     }
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Item> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(allItems);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (Item item : allItems) {
+                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            items.clear();
+            items.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 }

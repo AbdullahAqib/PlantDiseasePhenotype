@@ -10,7 +10,8 @@
         android:id="@+id/progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,20 +67,6 @@
                     android:textSize="22sp" />
 
                 <EditText
-                    android:id="@+id/txt_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:ems="10"
-                    android:hint="Phone"
-                    android:inputType="phone"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#F7F2F2"
-                    android:textSize="22sp" />
-
-                <EditText
                     android:id="@+id/txt_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,6 +80,19 @@
                     android:textColorHint="#F7F2F2"
                     android:textSize="22sp" />
 
+                <EditText
+                    android:id="@+id/txt_confirm_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:backgroundTint="@android:color/darker_gray"
+                    android:ems="10"
+                    android:hint="Confirm Password"
+                    android:inputType="textPassword"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#F7F2F2"
+                    android:textSize="22sp" />
 
                 <Button
                     android:id="@+id/btn_register"

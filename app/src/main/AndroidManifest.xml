@@ -49,6 +49,7 @@
             android:noHistory="true" />
         <activity
             android:name=".BlogActivity"
+            android:theme="@style/DarkActionBar"
             android:noHistory="true" />
         <activity android:name=".SplashScreen" />
         <activity

@@ -9,11 +9,12 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class UpdateEmailDialog extends Dialog implements
@@ -73,8 +75,6 @@ public class UpdateEmailDialog extends Dialog implements
         txt_email.clearFocus();
         txt_password.clearFocus();
 
-        btn_update.setEnabled(false);
-
         if (email.isEmpty()) {
             txt_email.setError(c.getString(R.string.input_error_email));
             txt_email.requestFocus();
@@ -87,25 +87,32 @@ public class UpdateEmailDialog extends Dialog implements
             return;
         }
 
+        btn_update.setEnabled(false);
+
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         AuthCredential credential = EmailAuthProvider
                 .getCredential(user.getEmail(), password);
+
         user.reauthenticate(credential)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        user.updateEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                updateUserInformation();
-                                dismiss();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(c, "Something wents wrong. Please try again.", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                        if(task.isSuccessful()) {
+                            user.updateEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    updateUserInformation();
+                                    dismiss();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(c, "Something wents wrong. Please try again.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }else{
+                            Toast.makeText(c, "Authentication Failed", Toast.LENGTH_LONG).show();
+                        }
                         btn_update.setEnabled(true);
                     }
                 });

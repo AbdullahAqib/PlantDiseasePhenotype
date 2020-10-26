@@ -2,13 +2,17 @@ package com.example.plantdiseasephenotype;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,6 +24,7 @@ import retrofit2.Response;
 public class BlogActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     private RecyclerView recyclerView;
+    private BlogAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +42,14 @@ public class BlogActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     public void getBlogList() {
-        Call<BlogsList> blogsAPICall = BloggerAPI.getBlogService().getBlogList();
+        Call<BlogsList> blogsAPICall = BloggerAPI.getBlogService(getApplicationContext()).getBlogList();
         blogsAPICall.enqueue(new Callback<BlogsList>() {
             @Override
             public void onResponse(Call<BlogsList> call, Response<BlogsList> response) {
                 findViewById(R.id.progressbar).setVisibility(View.GONE);
                 BlogsList blogsList = response.body();
-                recyclerView.setAdapter(new BlogAdapter(BlogActivity.this, blogsList.getItems()));
+                adapter = new BlogAdapter(BlogActivity.this, blogsList.getItems());
+                recyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -52,6 +58,27 @@ public class BlogActivity extends AppCompatActivity implements BottomNavigationV
                 startActivity(new Intent(BlogActivity.this, HomeActivity.class));
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+        return true;
     }
 
     @Override

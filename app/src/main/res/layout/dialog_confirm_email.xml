@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:src="@drawable/email_icon_64dp"
+        android:tint="@color/cardview_dark_background"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email Confirmation"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="26sp"
+        android:textColor="#ff000000"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirmation mail is forwarded to your provided email. Please confirm that before login"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="14sp"
+        android:padding="10dp"
+        android:textColor="#ff000000"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Cancel"
+            android:id="@+id/btn_cancel"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_below="@+id/text_dialog"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/gradient"
+            android:layout_marginRight="12dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/cardview_dark_background" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Okay"
+            android:id="@+id/btn_okay"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_below="@+id/text_dialog"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/gradient"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/cardview_dark_background" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

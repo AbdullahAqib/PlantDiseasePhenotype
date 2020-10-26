@@ -129,8 +129,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             FirebaseUser facebokkUser = mAuth.getCurrentUser();
                             User user = new User(
                                     facebokkUser.getDisplayName(),
-                                    facebokkUser.getEmail(),
-                                    facebokkUser.getPhoneNumber()
+                                    facebokkUser.getEmail()
                             );
 
                             saveUserInDatabase(user);
@@ -193,8 +192,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful()) {
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(intent);
+                    if(checkEmailVerified(mAuth.getCurrentUser())) {
+                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(LoginActivity.this, "Email not varified. Please confirm your email first.", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -255,8 +258,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             User user = new User(
                                     googleUser.getDisplayName(),
-                                    googleUser.getEmail(),
-                                    googleUser.getPhoneNumber()
+                                    googleUser.getEmail()
                             );
 
                             saveUserInDatabase(user);
@@ -272,9 +274,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth.getCurrentUser() != null) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(checkEmailVerified(user)){
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
         }
+    }
+
+    private boolean checkEmailVerified(FirebaseUser user){
+        if (user != null) {
+            if(user.isEmailVerified())
+                return true;
+            else
+                mAuth.signOut();
+        }
+        return false;
     }
 
 }

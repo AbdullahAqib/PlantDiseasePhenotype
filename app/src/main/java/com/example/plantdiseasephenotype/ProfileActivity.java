@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -20,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
-    TextView txt_name, txt_email, txt_phone;
+    TextView txt_name, txt_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,33 +32,67 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         txt_name = findViewById(R.id.txt_name);
         txt_email = findViewById(R.id.txt_email);
-        txt_phone = findViewById(R.id.txt_phone);
 
+        loadUserInformation();
+
+        findViewById(R.id.update_public_profile).setOnClickListener(this);
+        findViewById(R.id.update_password).setOnClickListener(this);
+        findViewById(R.id.update_email).setOnClickListener(this);
         findViewById(R.id.txt_logout).setOnClickListener(this);
-        findViewById(R.id.update_information).setOnClickListener(this);
         findViewById(R.id.deactivate).setOnClickListener(this);
 
         BottomNavigationView navbar = findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_profile);
         navbar.setOnNavigationItemSelectedListener(this);
-
-        loadUserInformation();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.update_public_profile:
+                updatePublicProfile();
+                break;
+            case R.id.update_password:
+                updatePassword();
+                break;
+            case R.id.update_email:
+                updateEmail();
+                break;
             case R.id.txt_logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                break;
-            case R.id.update_information:
-                startActivity(new Intent(getApplicationContext(), UpdateProfileActivity.class));
+                finishAffinity();
                 break;
             case R.id.deactivate:
                 deactivateAccount();
                 break;
         }
+    }
+
+    private void updatePublicProfile(){
+        Intent intent = new Intent(ProfileActivity.this, UpdateProfileActivity.class);
+        startActivity(intent);
+    }
+
+    private void updatePassword() {
+
+        UpdatePasswordDialog dialog = new UpdatePasswordDialog(ProfileActivity.this);
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+    }
+
+
+    private void updateEmail() {
+
+        UpdateEmailDialog dialog = new UpdateEmailDialog(ProfileActivity.this);
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
     }
 
     private void deactivateAccount() {
@@ -76,9 +113,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user;
                         user = dataSnapshot.getValue(User.class);
-                        txt_name.setText(user.name);
-                        txt_email.setText(user.email);
-                        txt_phone.setText(user.phone);
+                        txt_name.setText(user.getName());
+                        txt_email.setText(user.getEmail());
                     }
 
                     @Override

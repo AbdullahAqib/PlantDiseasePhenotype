@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,11 +19,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
-    EditText txt_name, txt_email, txt_phone, txt_password;
+    EditText txt_name, txt_email, txt_password, txt_confirm_password;
     Button btn_register;
     TextView login_now;
     ProgressBar progressBar;
@@ -36,12 +39,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         txt_name = findViewById(R.id.txt_name);
         txt_email = findViewById(R.id.txt_email);
-        txt_phone = findViewById(R.id.txt_phone);
         txt_password = findViewById(R.id.txt_password);
+        txt_confirm_password = findViewById(R.id.txt_confirm_password);
         btn_register = findViewById(R.id.btn_register);
         login_now = findViewById(R.id.login_now);
         progressBar = findViewById(R.id.progressbar);
-        progressBar.setVisibility(View.GONE);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -65,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final String name = txt_name.getText().toString().trim();
         final String email = txt_email.getText().toString().trim();
         String password = txt_password.getText().toString().trim();
-        final String phone = txt_phone.getText().toString().trim();
+        final String confirmPassword = txt_confirm_password.getText().toString().trim();
 
         if (name.isEmpty()) {
             txt_name.setError(getString(R.string.input_error_name));
@@ -97,20 +99,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        if (phone.isEmpty()) {
-            txt_phone.setError(getString(R.string.input_error_phone));
-            txt_phone.requestFocus();
+        if (!password.equals(confirmPassword)) {
+            txt_confirm_password.setError("Password mismatch");
+            txt_confirm_password.requestFocus();
             return;
         }
 
-//        if (phone.length() != 10) {
-//            txt_phone.setError(getString(R.string.input_error_phone_invalid));
-//            txt_phone.requestFocus();
-//            return;
-//        }
-
-
         progressBar.setVisibility(View.VISIBLE);
+        btn_register.setEnabled(false);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -120,8 +116,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                             User user = new User(
                                     name,
-                                    email,
-                                    phone
+                                    email
                             );
 
                             FirebaseDatabase.getInstance().getReference("Users")
@@ -129,9 +124,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    progressBar.setVisibility(View.GONE);
+                                    btn_register.setEnabled(true);
                                     if (task.isSuccessful()) {
                                         Toast.makeText(RegisterActivity.this, getString(R.string.registration_success), Toast.LENGTH_LONG).show();
-                                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                        confirmEmail();
                                     } else {
                                         //display a failure message
                                     }
@@ -141,9 +138,30 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         } else {
                             Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
-                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void confirmEmail() {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                           FirebaseAuth.getInstance().signOut();
+                        }
                     }
                 });
 
+        ConfirmEmailDialog dialog = new ConfirmEmailDialog(RegisterActivity.this);
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
     }
 }
+

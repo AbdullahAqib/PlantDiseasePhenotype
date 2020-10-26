@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -50,22 +57,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:drawablePadding="10dp"
-                android:textAllCaps="true"
-                android:text="Abdullah Aqib"/>
-
-            <TextView
-                android:id="@+id/txt_phone"
-                android:drawableTint="#8D8383"
-                android:drawableLeft="@drawable/phone_icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                android:textSize="18sp"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:drawablePadding="10dp"
-                android:text="03144408616"/>
+                android:textAllCaps="true" />
 
             <TextView
                 android:id="@+id/txt_email"
@@ -78,8 +70,7 @@
                 android:textSize="18sp"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
-                android:drawablePadding="10dp"
-                android:text="abdullahriaz008@gmail.com"/>
+                android:drawablePadding="10dp" />
 
             <TextView
                 android:gravity="center_horizontal"
@@ -94,18 +85,46 @@
                 android:text="Settings"/>
 
             <TextView
-                android:id="@+id/update_information"
-                android:drawableTint="#8D8383"
-                android:drawableLeft="@drawable/settings_icon"
+                android:id="@+id/update_public_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_gravity="center"
-                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/edit_icon"
+                android:drawablePadding="10dp"
+                android:drawableTint="#8D8383"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
+                android:text="Update Public Profile"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/update_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/email_icon"
                 android:drawablePadding="10dp"
-                android:text="Update Information"/>
+                android:drawableTint="#8D8383"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Update Email"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/update_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/password_icon"
+                android:drawablePadding="10dp"
+                android:drawableTint="#8D8383"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Update Password"
+                android:textSize="18sp" />
 
 
             <TextView
