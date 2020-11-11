@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/register_background"
     tools:context=".PredictionActivity">
 
     <ScrollView
@@ -27,7 +28,8 @@
                 android:layout_height="400dp"
                 android:layout_alignParentTop="true"
                 android:background="#81191A19"
-                android:contentDescription="TODO" android:scaleType="centerCrop"
+                android:contentDescription="TODO"
+                android:scaleType="centerCrop"
                 android:src="@drawable/camera_icon" />
 
             <TextView
@@ -36,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text=""
+                android:textColor="#FFFFFF"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textSize="22sp"

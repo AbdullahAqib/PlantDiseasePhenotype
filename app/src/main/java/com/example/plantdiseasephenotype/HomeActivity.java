@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
@@ -29,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     public static String AppId = "4dfbee4b454ab2aa20215eb57c73c7a1";
     public static String lat = null;
@@ -37,6 +40,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     TextView txt_temperature, txt_hum_pres, txt_city_name, txt_date, txt_meridiem;
     ImageView weather_icon;
+    ImageButton askCommunityButton, helpOthersButton, myUploadsButton;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -45,6 +49,12 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        askCommunityButton = findViewById(R.id.btn_ask_coummunit);
+        askCommunityButton.setOnClickListener(this);
+        helpOthersButton = findViewById(R.id.btn_help_others);
+        helpOthersButton.setOnClickListener(this);
+        myUploadsButton = findViewById(R.id.btn_my_uploads);
+        myUploadsButton.setOnClickListener(this);
         txt_temperature = findViewById(R.id.txt_temperature);
         txt_hum_pres = findViewById(R.id.txt_hum_pres);
         txt_city_name = findViewById(R.id.txt_city_name);
@@ -158,5 +168,26 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent;
+        switch (view.getId()){
+            case R.id.btn_ask_coummunit:
+                intent = new Intent(getApplicationContext(), AskCommunityActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_help_others:
+                intent = new Intent(getApplicationContext(), ImagesActivity.class);
+                intent.putExtra("id", view.getId());
+                startActivity(intent);
+                break;
+            case R.id.btn_my_uploads:
+                intent = new Intent(getApplicationContext(), ImagesActivity.class);
+                intent.putExtra("id", view.getId());
+                startActivity(intent);
+                break;
+        }
     }
 }

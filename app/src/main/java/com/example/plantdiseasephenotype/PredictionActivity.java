@@ -190,9 +190,11 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         );
 
         //Calling the forward of the model to run our input
-        final IValue[] outputTuple = module.forward(IValue.from(input)).toTuple();
+//        final IValue[] outputTuple = module.forward(IValue.from(input)).toTuple();
+//
+//        final Tensor output = outputTuple[0].toTensor();
 
-        final Tensor output = outputTuple[0].toTensor();
+        final Tensor output = module.forward(IValue.from(input)).toTensor();
 
         final float[] score_arr = output.getDataAsFloatArray();
 

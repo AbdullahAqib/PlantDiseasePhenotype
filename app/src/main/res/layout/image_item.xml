@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="6dp"
+    android:id="@+id/image_item">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/image_title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="What is the name of this plant?" />
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:id="@+id/image_description"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="This fall, explore the beautiful landscapes and the changes in the trees and flowers from green to red. Share your pictures of colorful leaves with the PlantSnap." />
+
+        <ImageView
+            android:id="@+id/uploaded_image"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:src="@mipmap/register_background"
+            android:layout_height="400dp" />
+
+        <TextView
+            android:id="@+id/comment_count"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14dp"
+            android:textColor="#000"
+            android:text="6 Comments"/>
+
+        <TextView
+            android:id="@+id/timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="right"
+            android:text="Jan 01, 1970 Thu 5:00 AM"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -33,13 +34,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txt_name = findViewById(R.id.txt_name);
         txt_email = findViewById(R.id.txt_email);
 
-        loadUserInformation();
+//        loadUserInformation();
 
         findViewById(R.id.update_public_profile).setOnClickListener(this);
         findViewById(R.id.update_password).setOnClickListener(this);
         findViewById(R.id.update_email).setOnClickListener(this);
         findViewById(R.id.txt_logout).setOnClickListener(this);
         findViewById(R.id.deactivate).setOnClickListener(this);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        txt_name.setText(firebaseUser.getDisplayName());
+        txt_email.setText(firebaseUser.getEmail());
 
         BottomNavigationView navbar = findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_profile);
