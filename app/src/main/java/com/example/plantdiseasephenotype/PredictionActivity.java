@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -128,7 +129,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_camera:
-                startActivity(new Intent(getApplicationContext(), CameraActivity.class));
+                startActivity(new Intent(getApplicationContext(), CameraXActivity.class));
                 overridePendingTransition(0,0);
                 finish();
                 return true;
@@ -178,6 +179,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
             //Loading the model file.
             module = Module.load(fetchModelFile(PredictionActivity.this, "plant_disease_model.pt"));
+
         } catch (IOException e) {
             finish();
         }
@@ -193,6 +195,11 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 //        final IValue[] outputTuple = module.forward(IValue.from(input)).toTuple();
 //
 //        final Tensor output = outputTuple[0].toTensor();
+
+        if (module == null) {
+            Toast.makeText(this, "Model not found. Please download the model.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         final Tensor output = module.forward(IValue.from(input)).toTensor();
 

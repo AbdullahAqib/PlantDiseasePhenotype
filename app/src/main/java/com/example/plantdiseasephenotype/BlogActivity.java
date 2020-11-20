@@ -85,7 +85,7 @@ public class BlogActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_camera:
-                startActivity(new Intent(getApplicationContext(), CameraActivity.class));
+                startActivity(new Intent(getApplicationContext(), CameraXActivity.class));
                 overridePendingTransition(0,0);
                 finish();
                 return true;
