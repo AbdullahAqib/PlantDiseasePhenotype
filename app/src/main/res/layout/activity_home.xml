@@ -8,70 +8,6 @@
     tools:context=".HomeActivity">
 
     <RelativeLayout
-        android:layout_below="@+id/top_information"
-        android:layout_above="@+id/navbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp">
-
-                <ImageButton
-                    android:id="@+id/btn_ask_coummunit"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/roundcorners"
-                    android:src="@drawable/ask_community_icon" />
-
-                <ImageButton
-                    android:id="@+id/btn_help_others"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="16dp"
-                    android:background="@drawable/roundcorners"
-                    android:src="@drawable/help_others_icon" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp">
-
-                <ImageButton
-                    android:id="@+id/btn_my_uploads"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/roundcorners"
-                    android:src="@drawable/my_uploads_icon" />
-
-                <ImageButton
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="16dp"
-                    android:background="@drawable/roundcorners"
-                    android:src="@drawable/help_others_icon" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/top_information"
         android:layout_width="match_parent"
         android:layout_height="150dp"
@@ -125,7 +61,7 @@
                 android:layout_gravity="end"
                 android:drawableRight="@drawable/location_icon"
                 android:text="London"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
 
         </LinearLayout>
@@ -176,14 +112,79 @@
             android:background="#000" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/navbar"
+        android:layout_below="@+id/top_information">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp">
+
+                <ImageButton
+                    android:id="@+id/btn_ask_coummunit"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/roundcorners"
+                    android:src="@drawable/ask_community_icon" />
+
+                <ImageButton
+                    android:id="@+id/btn_help_others"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/roundcorners"
+                    android:src="@drawable/help_others_icon" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp">
+
+                <ImageButton
+                    android:id="@+id/btn_my_uploads"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/roundcorners"
+                    android:src="@drawable/my_uploads_icon" />
+
+                <ImageButton
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/roundcorners"
+                    android:src="@drawable/notifications_icon" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navbar"
-        android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemBackground="@color/colorWhite"
-        app:itemIconTint="#8D8383"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        app:itemBackground="@color/colorWhite"
+        app:itemIconTint="#8D8383"
+        app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>
