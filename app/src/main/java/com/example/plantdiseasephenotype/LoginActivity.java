@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                         startActivity(intent);
                     }else{
-                        Toast.makeText(LoginActivity.this, "Email not varified. Please confirm your email first.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Email not verified. Please confirm your email first.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
