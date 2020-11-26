@@ -34,17 +34,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txt_name = findViewById(R.id.txt_name);
         txt_email = findViewById(R.id.txt_email);
 
-//        loadUserInformation();
+        loadUserInformation();
 
         findViewById(R.id.update_public_profile).setOnClickListener(this);
         findViewById(R.id.update_password).setOnClickListener(this);
         findViewById(R.id.update_email).setOnClickListener(this);
+        findViewById(R.id.feedback).setOnClickListener(this);
         findViewById(R.id.txt_logout).setOnClickListener(this);
         findViewById(R.id.deactivate).setOnClickListener(this);
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        txt_name.setText(firebaseUser.getDisplayName());
-        txt_email.setText(firebaseUser.getEmail());
+//        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+//        txt_name.setText(firebaseUser.getDisplayName());
+//        txt_email.setText(firebaseUser.getEmail());
 
         BottomNavigationView navbar = findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_profile);
@@ -62,6 +63,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.update_email:
                 updateEmail();
+                break;
+            case R.id.feedback:
+                feedback();
                 break;
             case R.id.txt_logout:
                 FirebaseAuth.getInstance().signOut();
@@ -89,6 +93,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    private void feedback() {
+
+        FeedbackDialog dialog = new FeedbackDialog(ProfileActivity.this);
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+    }
 
     private void updateEmail() {
 

@@ -68,6 +68,8 @@ public class AskCommunityActivity extends AppCompatActivity implements View.OnCl
         imageView.setOnClickListener(this);
         findViewById(R.id.upload).setOnClickListener(this);
 
+        title.requestFocus();
+
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
     }

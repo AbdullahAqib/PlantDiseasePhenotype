@@ -28,9 +28,9 @@ public class UpdateProfileActivity extends AppCompatActivity implements View.OnC
 
         txt_name = findViewById(R.id.txt_name);
 
-//        loadUserInformation();
+        loadUserInformation();
 
-        txt_name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+//        txt_name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         findViewById(R.id.btn_update).setOnClickListener(this);
     }

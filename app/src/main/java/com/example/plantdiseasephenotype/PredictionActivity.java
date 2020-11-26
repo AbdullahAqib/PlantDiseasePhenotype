@@ -39,9 +39,9 @@ import java.io.OutputStream;
 public class PredictionActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private static int RESULT_LOAD_IMAGE = 1;
 
-    public static Bitmap bitmap = null;
+    public static Uri uri = null;
 
-    TextView textView;
+    TextView textView, learnMore;
     ImageView imageView;
     Button detectButton;
 
@@ -56,13 +56,14 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         imageView = findViewById(R.id.image);
         textView = findViewById(R.id.result_text);
+        learnMore = findViewById(R.id.learn_more);
         detectButton = findViewById(R.id.detect);
         imageView.setOnClickListener(this);
 
-        if(bitmap!=null){
-            imageView.setImageBitmap(bitmap);
+        if(uri!=null){
+            imageView.setImageURI(uri);
             detectButton.setOnClickListener(this);
-            bitmap = null;
+            uri = null;
         }
 
         BottomNavigationView navbar = findViewById(R.id.navbar);
@@ -217,14 +218,31 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         //Fetching the name from the list based on the index
         String detected_class = ModelClasses.MODEL_CLASSES[ms_ix];
+        String link = ModelClassesLinks.MODEL_CLASSES_Links[ms_ix];
 
         //Writing the detected class in to the text view of the layout
         textView.setText(detected_class);
         detectButton.setOnClickListener(null);
+        if(!link.isEmpty()) {
+            learnMore.setVisibility(View.VISIBLE);
+
+            learnMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                    intent.putExtra("url", link);
+                    startActivity(intent);
+                    imageView.setImageResource(R.drawable.camera_icon);
+                    textView.setText("");
+                    learnMore.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void pickImageFromGallery() {
         textView.setText("");
+        learnMore.setVisibility(View.GONE);
         Intent i = new Intent(
                 Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

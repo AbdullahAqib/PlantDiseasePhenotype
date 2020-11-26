@@ -126,6 +126,20 @@
                 android:text="Update Password"
                 android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/feedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/ic_feedback_32"
+                android:drawablePadding="10dp"
+                android:drawableTint="#8D8383"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Give feedback"
+                android:textSize="18sp" />
+
 
             <TextView
                 android:id="@+id/txt_logout"

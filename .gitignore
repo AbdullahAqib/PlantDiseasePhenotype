@@ -12,3 +12,4 @@
 /captures
 .externalNativeBuild
 google-services.json
+/app/src/main/assets/plant_disease_model.pt

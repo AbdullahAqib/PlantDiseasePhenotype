@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".CameraXActivity"></activity>
+        <activity android:name=".CameraXActivity"/>
         <activity android:name=".ImageDetailActivity" />
         <activity android:name=".ImagesActivity" />
         <activity android:name=".AskCommunityActivity" />
@@ -48,7 +48,6 @@
             android:noHistory="true" />
         <activity
             android:name=".BlogActivity"
-            android:noHistory="true"
             android:theme="@style/DarkActionBar" />
         <activity android:name=".SplashScreen" />
         <activity
@@ -66,7 +65,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity" />
-        <activity android:name=".CameraActivity" />
+
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+        android:theme="@style/Base.Theme.AppCompat"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

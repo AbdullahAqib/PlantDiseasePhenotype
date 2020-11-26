@@ -23,7 +23,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener{
 
     FrameLayout preview;
-    ImageView buttonCapture;
     Camera camera;
     CameraPreview cameraPreview;
 
@@ -66,9 +65,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             matrix.postRotate(90);
             Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
 
-            Intent intent = new Intent(getApplicationContext(), PredictionActivity.class);
-            PredictionActivity.bitmap = rotatedBitmap;
-            startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(), PredictionActivity.class);
+//            PredictionActivity.bitmap = rotatedBitmap;
+//            startActivity(intent);
         }
     };
 

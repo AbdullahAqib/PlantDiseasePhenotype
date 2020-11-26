@@ -14,12 +14,15 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -27,7 +30,10 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -36,7 +42,7 @@ import java.util.concurrent.Executors;
 public class CameraXActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private final int REQUEST_CODE_PERMISSIONS = 10;
-    private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
+    private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private PreviewView viewFinder;
@@ -74,12 +80,12 @@ public class CameraXActivity extends AppCompatActivity implements BottomNavigati
             @Override
             public void onCaptureSuccess(@NonNull ImageProxy image) {
                 Bitmap bm = imageProxyToBitmap(image);
-//                Matrix matrix = new Matrix();
-//                matrix.postRotate(90);
-//                Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-                Intent intent = new Intent(getApplicationContext(), PredictionActivity.class);
-                PredictionActivity.bitmap = bm;
-                startActivity(intent);
+
+                Uri tempUri = getImageUri(getApplicationContext(), bm);
+
+                CropImage.activity(tempUri)
+                        .start(CameraXActivity.this);
+
             }
 
             @Override
@@ -88,6 +94,13 @@ public class CameraXActivity extends AppCompatActivity implements BottomNavigati
                 Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     // copied from below.
@@ -147,6 +160,24 @@ public class CameraXActivity extends AppCompatActivity implements BottomNavigati
                 // send them back to home
                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 this.finish();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+
+                Intent intent = new Intent(getApplicationContext(), PredictionActivity.class);
+                PredictionActivity.uri = resultUri;
+                startActivity(intent);
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
             }
         }
     }

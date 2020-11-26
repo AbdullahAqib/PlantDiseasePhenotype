@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:contentDescription="TODO" android:gravity="center"
+        android:src="@drawable/ic_feedback_64"
+        android:tint="@color/cardview_dark_background"
+        android:scaleType="fitCenter" />
+
+    <EditText
+        android:id="@+id/txt_feedback"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:minLines="6"
+        android:padding="12dp"
+        android:layout_marginTop="10dp"
+        android:gravity="top|left"
+        android:background="@null"
+        android:maxLines="10"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        android:hint="Tell us how we can improve the app."
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Cancel"
+            android:id="@+id/btn_cancel"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_below="@+id/text_dialog"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/gradient"
+            android:layout_marginRight="12dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/cardview_dark_background" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Submit"
+            android:id="@+id/btn_submit"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_below="@+id/text_dialog"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/gradient"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/cardview_dark_background" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
