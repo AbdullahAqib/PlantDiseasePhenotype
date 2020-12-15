@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -26,7 +25,6 @@ import android.location.Location;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.io.Console;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -135,7 +133,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Glide.with(getApplicationContext()).load("http://openweathermap.org/img/w/" + weatherResponse.weather.get(0).icon + ".png").into(weather_icon);
                     txt_temperature.setText(String.valueOf(weatherResponse.main.temp) + "°");
                     txt_hum_pres.setText(String.valueOf(weatherResponse.main.humidity) + "°/" + String.valueOf(weatherResponse.main.pressure) + "°");
-
                 }
             }
 

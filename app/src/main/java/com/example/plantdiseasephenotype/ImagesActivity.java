@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -47,15 +48,15 @@ public class ImagesActivity extends AppCompatActivity implements BottomNavigatio
         mUploads = new ArrayList<>();
         mAdapter = new ImageAdapter(ImagesActivity.this, mUploads);
         mRecyclerView.setAdapter(mAdapter);
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
-        if (id == R.id.btn_my_uploads) {
+        if (id == R.id.history) {
+            mDatabaseRef = FirebaseDatabase.getInstance().getReference("history");
             mDatabaseRef.orderByChild("userId").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mUploads.clear();
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         Upload upload = postSnapshot.getValue(Upload.class);
-                        upload.setCommentCount(postSnapshot.child("comments").getChildrenCount());
+                        upload.setCommentCount(-1);
                         upload.setKey(postSnapshot.getKey());
                         mUploads.add(upload);
                     }
@@ -70,30 +71,58 @@ public class ImagesActivity extends AppCompatActivity implements BottomNavigatio
                 }
             });
         } else {
-            mDatabaseRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    mUploads.clear();
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        Upload upload = postSnapshot.getValue(Upload.class);
-                        upload.setCommentCount(postSnapshot.child("comments").getChildrenCount());
-                        upload.setKey(postSnapshot.getKey());
-                        mUploads.add(upload);
+            mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+            if (id == R.id.btn_my_uploads) {
+                mDatabaseRef.orderByChild("userId").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        mUploads.clear();
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Upload upload = postSnapshot.getValue(Upload.class);
+                            upload.setCommentCount(postSnapshot.child("comments").getChildrenCount());
+                            upload.setKey(postSnapshot.getKey());
+                            mUploads.add(upload);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                        mProgressCircle.setVisibility(View.INVISIBLE);
                     }
-                    mAdapter.notifyDataSetChanged();
-                    mProgressCircle.setVisibility(View.INVISIBLE);
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(ImagesActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    mProgressCircle.setVisibility(View.INVISIBLE);
-                }
-            });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(ImagesActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        mProgressCircle.setVisibility(View.INVISIBLE);
+                    }
+                });
+            } else {
+                mDatabaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        mUploads.clear();
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Upload upload = postSnapshot.getValue(Upload.class);
+                            upload.setCommentCount(postSnapshot.child("comments").getChildrenCount());
+                            upload.setKey(postSnapshot.getKey());
+                            mUploads.add(upload);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                        mProgressCircle.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(ImagesActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        mProgressCircle.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
         }
 
         BottomNavigationView navbar = findViewById(R.id.navbar);
-        navbar.setSelectedItemId(R.id.nav_home);
+        if(id == R.id.history) {
+            navbar.setSelectedItemId(R.id.nav_profile);
+        }else{
+            navbar.setSelectedItemId(R.id.nav_home);
+        }
         navbar.setOnNavigationItemSelectedListener(this);
     }
 

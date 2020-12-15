@@ -2,6 +2,7 @@ package com.example.plantdiseasephenotype;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -37,7 +39,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         }else{
             holder.description.setText(uploadCurrent.getDescription());
         }
-        holder.commentCount.setText(String.valueOf(uploadCurrent.getCommentCount())+" Comments");
+
+        if(uploadCurrent.getCommentCount()==-1){
+            holder.commentCount.setVisibility(View.GONE);
+            holder.removeClickListener();
+            holder.changeColors();
+            }else {
+            holder.commentCount.setText(String.valueOf(uploadCurrent.getCommentCount()) + " Comments");
+        }
         holder.timestamp.setText(uploadCurrent.getUploadDate());
         Glide.with(mContext)
                 .load(uploadCurrent.getImageUrl())
@@ -65,6 +74,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             Intent intent = new Intent(mContext, ImageDetailActivity.class);
             intent.putExtra("Upload", upload);
             mContext.startActivity(intent);
+        }
+
+        public void removeClickListener(){
+            itemView.setOnClickListener(null);
+        }
+
+        public void changeColors(){
+            itemView.setBackgroundColor(Color.parseColor("#b5bbbd"));
         }
     }
 }

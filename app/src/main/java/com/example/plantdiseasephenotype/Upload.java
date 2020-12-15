@@ -21,6 +21,12 @@ public class Upload implements Serializable {
         //empty constructor needed
     }
 
+    public Upload(String title, String imageUrl, String userId) {
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.userId = userId;
+    }
+
     public Upload(String title, String imageUrl, String userId, String userName) {
         this.title = title;
         this.imageUrl = imageUrl;
@@ -105,6 +111,7 @@ public class Upload implements Serializable {
         this.key = key;
     }
 
+    @Exclude
     public long getCommentCount() {
         return commentCount;
     }
@@ -117,6 +124,7 @@ public class Upload implements Serializable {
         commentCount++;
     }
 
+    @Exclude
     public String getUploadDate(){
         Date date = new Date(timestamp);
         String dateTimePattern = "MMM dd, yyyy EEE h:mm a";

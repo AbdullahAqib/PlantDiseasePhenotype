@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,14 +17,30 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.pytorch.IValue;
 import org.pytorch.Module;
@@ -44,6 +61,9 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     TextView textView, learnMore;
     ImageView imageView;
     Button detectButton;
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+    private StorageTask mUploadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,43 +80,30 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         detectButton = findViewById(R.id.detect);
         imageView.setOnClickListener(this);
 
-        if(uri!=null){
-            imageView.setImageURI(uri);
-            detectButton.setOnClickListener(this);
-            uri = null;
+        if (uri != null) {
+            updateImageBitmap();
         }
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("history");
 
         BottomNavigationView navbar = findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_prediction);
         navbar.setOnNavigationItemSelectedListener(this);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //This functions return the selected image from gallery
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
-            //Setting the URI so we can read the Bitmap from the image
-            imageView.setImageURI(null);
-            imageView.setImageURI(selectedImage);
-
-            detectButton.setOnClickListener(this);
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+//            Uri selectedImage = data.getData();
+//            uri = selectedImage;
+//            imageView.setImageURI(selectedImage);
+//
+//            detectButton.setOnClickListener(this);
+//        }
+//    }
 
     public static String fetchModelFile(Context context, String modelName) throws IOException {
         File file = new File(context.getFilesDir(), modelName);
@@ -120,7 +127,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (!(ActivityCompat.checkSelfPermission(PredictionActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)){
+        if (!(ActivityCompat.checkSelfPermission(PredictionActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
         }
@@ -131,24 +138,24 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         switch (item.getItemId()) {
             case R.id.nav_camera:
                 startActivity(new Intent(getApplicationContext(), CameraXActivity.class));
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             case R.id.nav_prediction:
                 return true;
             case R.id.nav_home:
                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             case R.id.nav_blogs:
                 startActivity(new Intent(getApplicationContext(), BlogActivity.class));
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             case R.id.nav_profile:
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
         }
@@ -157,7 +164,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.image:
                 pickImageFromGallery();
                 break;
@@ -173,7 +180,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         //Getting the image from the image view
         try {
             //Read the image as Bitmap
-            bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
 
             //Here we reshape the image into 400*400
             bitmap = Bitmap.createScaledBitmap(bitmap, 299, 299, true);
@@ -223,7 +230,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         //Writing the detected class in to the text view of the layout
         textView.setText(detected_class);
         detectButton.setOnClickListener(null);
-        if(!link.isEmpty()) {
+        if (!link.isEmpty()) {
             learnMore.setVisibility(View.VISIBLE);
 
             learnMore.setOnClickListener(new View.OnClickListener() {
@@ -238,15 +245,79 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
                 }
             });
         }
+
+        uploadFile(detected_class, uri);
     }
 
     private void pickImageFromGallery() {
         textView.setText("");
         learnMore.setVisibility(View.GONE);
-        Intent i = new Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        startActivityForResult(i, RESULT_LOAD_IMAGE);
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                uri = resultUri;
+                updateImageBitmap();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
+
+    public void updateImageBitmap(){
+        imageView.setImageURI(uri);
+        detectButton.setOnClickListener(this);
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    private void uploadFile(String title, Uri uri) {
+
+            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+                    + "." + getFileExtension(uri));
+            mUploadTask = fileReference.putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(PredictionActivity.this, "History Updated", Toast.LENGTH_LONG).show();
+                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    final Uri downloadUrl = uri;
+                                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                    Upload upload = new Upload(title,
+                                                downloadUrl.toString(), firebaseUser.getUid());
+                                    String uploadId = mDatabaseRef.push().getKey();
+                                    mDatabaseRef.child(uploadId).setValue(upload);
+                                    mDatabaseRef.child(uploadId).child("timestamp").setValue(ServerValue.TIMESTAMP);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(PredictionActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+    }
+
 }

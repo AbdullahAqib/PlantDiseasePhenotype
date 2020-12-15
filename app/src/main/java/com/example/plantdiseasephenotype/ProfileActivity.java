@@ -40,6 +40,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.update_password).setOnClickListener(this);
         findViewById(R.id.update_email).setOnClickListener(this);
         findViewById(R.id.feedback).setOnClickListener(this);
+        findViewById(R.id.history).setOnClickListener(this);
         findViewById(R.id.txt_logout).setOnClickListener(this);
         findViewById(R.id.deactivate).setOnClickListener(this);
 
@@ -66,6 +67,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.feedback:
                 feedback();
+                break;
+            case R.id.history:
+                history();
                 break;
             case R.id.txt_logout:
                 FirebaseAuth.getInstance().signOut();
@@ -121,6 +125,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Window window = dialog.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
+    }
+
+    private void history(){
+        Intent intent = new Intent(getApplicationContext(), ImagesActivity.class);
+        intent.putExtra("id", R.id.history);
+        startActivity(intent);
     }
 
     void loadUserInformation() {
