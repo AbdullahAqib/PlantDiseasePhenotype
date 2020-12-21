@@ -10,8 +10,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_above="@id/navbar"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="15dp"
@@ -38,9 +38,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text=""
-                android:textColor="#FFFFFF"
                 android:textAlignment="center"
                 android:textAllCaps="true"
+                android:textColor="#FFFFFF"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
@@ -50,12 +50,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Learn More"
-                android:textColor="#4499FF"
                 android:textAlignment="center"
                 android:textAllCaps="true"
+                android:textColor="#4499FF"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/detect"
@@ -64,19 +64,30 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/gradient"
-                android:text="Detect"
-                android:textSize="22sp" />
+                android:text="Diagnose My Plant"
+                android:textSize="22sp"
+                app:backgroundTint="@null" />
 
+            <Button
+                android:id="@+id/callApiBtn"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/gradient"
+                android:text="View Saliency Map"
+                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navbar"
-        android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemBackground="@color/colorWhite"
-        app:itemIconTint="#8D8383"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        app:itemBackground="@color/colorWhite"
+        app:itemIconTint="#8D8383"
+        app:menu="@menu/bottom_nav_menu" />
 </RelativeLayout>
