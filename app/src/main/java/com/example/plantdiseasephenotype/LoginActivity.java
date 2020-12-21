@@ -302,7 +302,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (user != null) {
             String providerId = user.getProviderData().get(user.getProviderData().size() - 1).getProviderId();
             Log.i("LoginActivity", providerId);
-            if (providerId.equals("twitter.com")) {
+            if (!providerId.equals("password")) { /* providerId "password" for EmailAuthProvider*/
                 startHomeActivity();
             }
         } else {
