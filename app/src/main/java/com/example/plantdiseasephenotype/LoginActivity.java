@@ -8,11 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -27,6 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -34,9 +33,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
+
+import javax.security.auth.login.LoginException;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -47,6 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final static int RC_SIGN_IN = 123;
     FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
+    private OAuthProvider.Builder twitterProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +65,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
         mCallbackManager = CallbackManager.Factory.create();
+        twitterProvider = OAuthProvider.newBuilder("twitter.com");
 
-        createRequest();
+        createRequest(); // google provider
 
         findViewById(R.id.register_now).setOnClickListener(this);
         findViewById(R.id.btn_login).setOnClickListener(this);
@@ -90,9 +95,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 loginWithFacebook();
                 break;
             case R.id.twitter_login:
-                return;
-
+                loginWithTwitter();
+                break;
         }
+    }
+
+    private void loginWithTwitter() {
+        /* logs in with twitter */
+        mAuth
+            .startActivityForSignInWithProvider(this, twitterProvider.build())
+            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
+                    // we can't get email
+                    // see: https://developer.twitter.com/en/docs/apps/app-permissions
+                    User user = new User(
+                            authResult.getUser().getDisplayName(),
+                            ""
+                    );
+                    saveUserInDatabaseAndUpdateUI(user);
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Authentication with twitter failed!", Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     private void loginWithFacebook() {
@@ -117,7 +146,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -131,9 +159,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     facebokkUser.getDisplayName(),
                                     facebokkUser.getEmail()
                             );
-
-                            saveUserInDatabase(user);
-
+                            saveUserInDatabaseAndUpdateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
@@ -143,15 +169,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void saveUserInDatabase(User user) {
+    private void saveUserInDatabaseAndUpdateUI(User user) {
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(intent);
+                    startHomeActivity();
                 } else {
                     //display a failure message
                 }
@@ -192,10 +217,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful()) {
-                    if(checkEmailVerified(mAuth.getCurrentUser())) {
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        startActivity(intent);
-                    }else{
+                    if (checkEmailVerified(mAuth.getCurrentUser())) {
+                        startHomeActivity();
+                    } else {
                         Toast.makeText(LoginActivity.this, "Email not verified. Please confirm your email first.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -238,7 +262,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // ...
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        }else{
+        } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -261,7 +285,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     googleUser.getEmail()
                             );
 
-                            saveUserInDatabase(user);
+                            saveUserInDatabaseAndUpdateUI(user);
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Sorry auth failed.", Toast.LENGTH_SHORT).show();
@@ -275,14 +299,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onStart() {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
-        if(checkEmailVerified(user)){
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        if (user != null) {
+            String providerId = user.getProviderData().get(user.getProviderData().size() - 1).getProviderId();
+            Log.i("LoginActivity", providerId);
+            if (!providerId.equals("password")) { /* providerId "password" for EmailAuthProvider*/
+                startHomeActivity();
+            }
+        } else {
+            if (checkEmailVerified(user)) {
+                startHomeActivity();
+            }
         }
     }
 
-    private boolean checkEmailVerified(FirebaseUser user){
+    private void startHomeActivity() {
+        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+    }
+
+    private boolean checkEmailVerified(FirebaseUser user) {
         if (user != null) {
-            if(user.isEmailVerified())
+            if (user.isEmailVerified())
                 return true;
             else
                 mAuth.signOut();

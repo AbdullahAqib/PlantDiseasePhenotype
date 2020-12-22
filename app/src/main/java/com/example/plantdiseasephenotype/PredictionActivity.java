@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.plantdiseasephenotype.network.DeepLearningAPI;
+import com.example.plantdiseasephenotype.network.InferenceResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -52,15 +54,29 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PredictionActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private static int RESULT_LOAD_IMAGE = 1;
 
     public static Uri uri = null;
+    public static String LOG_TAG = "PredictionActivity";
 
     TextView textView, learnMore;
     ImageView imageView;
     Button detectButton;
+
+    /* temp */
+    Button callApiBtn;
+
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private StorageTask mUploadTask;
@@ -78,6 +94,8 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         textView = findViewById(R.id.result_text);
         learnMore = findViewById(R.id.learn_more);
         detectButton = findViewById(R.id.detect);
+        callApiBtn = findViewById(R.id.callApiBtn);
+
         imageView.setOnClickListener(this);
 
         if (uri != null) {
@@ -166,11 +184,52 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.image:
+                callApiBtn.setVisibility(View.GONE);
                 pickImageFromGallery();
                 break;
             case R.id.detect:
                 detectImage();
+                break;
+            case R.id.callApiBtn:
+                callAPI();
+                break;
         }
+    }
+
+    private void callAPI() {
+        Log.i(LOG_TAG, uri.getPath());
+        File file = new File(uri.getPath());
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        MultipartBody.Part img =
+                MultipartBody.Part.createFormData("img", file.getName(), requestBody);
+                // "img" is what server is expecting
+        DeepLearningAPI.DeepLearningService apiService = DeepLearningAPI.getDeepLearningService();
+        Call<ResponseBody> call = apiService.getSaliencyMap(img);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String filename = "salmap.png"; // no reason for it to be unique
+                        try (FileOutputStream fos = getApplicationContext().openFileOutput(filename, Context.MODE_PRIVATE)) {
+                            fos.write(response.body().bytes());
+                        }
+                        File f = new File(getApplicationContext().getFilesDir(), filename);
+                        uri = Uri.fromFile(f);
+
+                        // all that just to do this
+                        updateImageBitmap();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(LOG_TAG, t.toString());
+            }
+        });
     }
 
     private void detectImage() {
@@ -230,6 +289,10 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         //Writing the detected class in to the text view of the layout
         textView.setText(detected_class);
         detectButton.setOnClickListener(null);
+
+        // show saliency map button
+        callApiBtn.setVisibility(View.VISIBLE);
+
         if (!link.isEmpty()) {
             learnMore.setVisibility(View.VISIBLE);
 
@@ -263,8 +326,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
-                uri = resultUri;
+                uri = result.getUri();
                 updateImageBitmap();
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
@@ -275,6 +337,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     public void updateImageBitmap(){
         imageView.setImageURI(uri);
         detectButton.setOnClickListener(this);
+        callApiBtn.setOnClickListener(this);
     }
 
     private String getFileExtension(Uri uri) {
