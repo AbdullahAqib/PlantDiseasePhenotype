@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".activities.HomeActivity">
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -72,6 +72,12 @@
                 android:paddingLeft="10dp"
                 android:drawablePadding="10dp" />
 
+            <LinearLayout
+                android:id="@+id/settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <TextView
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
@@ -125,6 +131,20 @@
                 android:paddingLeft="10dp"
                 android:text="Update Password"
                 android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:textAllCaps="true"
+                android:text="Usefull links"/>
 
             <TextView
                 android:id="@+id/feedback"
