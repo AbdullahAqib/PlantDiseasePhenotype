@@ -16,7 +16,7 @@ import com.example.plantdiseasephenotype.dialogs.FeedbackDialog;
 import com.example.plantdiseasephenotype.R;
 import com.example.plantdiseasephenotype.dialogs.UpdateEmailDialog;
 import com.example.plantdiseasephenotype.dialogs.UpdatePasswordDialog;
-import com.example.plantdiseasephenotype.utils.User;
+import com.example.plantdiseasephenotype.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
@@ -41,23 +41,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         loadUserInformation();
 
         for(UserInfo user: FirebaseAuth.getInstance().getCurrentUser().getProviderData()){
-            if(user.getProviderId().equals("facebook.com") || user.getProviderId().equals("google.com")){
+            if(user.getProviderId().equals("facebook.com") || user.getProviderId().equals("google.com") || user.getProviderId().equals("twitter.com")){
                 loggedInwithEmail = false;
+                if(user.getProviderId().equals("twitter.com")){
+                    txt_email.setVisibility(View.GONE);
+                }
             }
         }
 
         if(!loggedInwithEmail){
             findViewById(R.id.settings).setVisibility(View.GONE);
+            findViewById(R.id.deactivate).setVisibility(View.GONE);
         }else{
             findViewById(R.id.update_public_profile).setOnClickListener(this);
             findViewById(R.id.update_password).setOnClickListener(this);
             findViewById(R.id.update_email).setOnClickListener(this);
+            findViewById(R.id.deactivate).setOnClickListener(this);
         }
 
         findViewById(R.id.feedback).setOnClickListener(this);
         findViewById(R.id.history).setOnClickListener(this);
         findViewById(R.id.txt_logout).setOnClickListener(this);
-        findViewById(R.id.deactivate).setOnClickListener(this);
 
 //        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 //        txt_name.setText(firebaseUser.getDisplayName());

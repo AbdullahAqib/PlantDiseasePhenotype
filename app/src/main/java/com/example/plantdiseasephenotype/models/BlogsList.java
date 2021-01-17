@@ -1,9 +1,8 @@
 
-package com.example.plantdiseasephenotype.utils;
+package com.example.plantdiseasephenotype.models;
 
 import java.util.List;
 
-import com.example.plantdiseasephenotype.utils.Item;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

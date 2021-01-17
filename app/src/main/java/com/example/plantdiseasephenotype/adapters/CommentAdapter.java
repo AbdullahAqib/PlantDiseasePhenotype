@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.plantdiseasephenotype.utils.Comment;
+import com.example.plantdiseasephenotype.models.Comment;
 import com.example.plantdiseasephenotype.R;
 
 import java.util.List;

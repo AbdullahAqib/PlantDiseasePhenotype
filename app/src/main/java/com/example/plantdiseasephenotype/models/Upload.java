@@ -1,11 +1,10 @@
-package com.example.plantdiseasephenotype.utils;
+package com.example.plantdiseasephenotype.models;
 
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 public class Upload implements Serializable {
     private String title;

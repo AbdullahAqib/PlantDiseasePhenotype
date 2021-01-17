@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.plantdiseasephenotype.R;
 import com.example.plantdiseasephenotype.network.WeatherAPI;
-import com.example.plantdiseasephenotype.network.WeatherResponse;
+import com.example.plantdiseasephenotype.models.WeatherResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     TextView txt_temperature, txt_hum_pres, txt_city_name, txt_date, txt_meridiem;
     ImageView weather_icon;
-    ImageButton askCommunityButton, helpOthersButton, myUploadsButton;
+    ImageButton askCommunityButton, helpOthersButton, myUploadsButton, newsButton;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -58,6 +58,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         helpOthersButton.setOnClickListener(this);
         myUploadsButton = findViewById(R.id.btn_my_uploads);
         myUploadsButton.setOnClickListener(this);
+        newsButton = findViewById(R.id.btn_news);
+        newsButton.setOnClickListener(this);
         txt_temperature = findViewById(R.id.txt_temperature);
         txt_hum_pres = findViewById(R.id.txt_hum_pres);
         txt_city_name = findViewById(R.id.txt_city_name);
@@ -134,7 +136,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     assert weatherResponse != null;
 
                     Glide.with(getApplicationContext()).load("http://openweathermap.org/img/w/" + weatherResponse.weather.get(0).icon + ".png").into(weather_icon);
-                    txt_temperature.setText(String.valueOf(Math.round(weatherResponse.main.temp - 273.15)) + "°");
+                    txt_temperature.setText(String.valueOf(Math.round(weatherResponse.main.temp - 273.15)) + "° C");
                     txt_hum_pres.setText(String.valueOf(weatherResponse.main.humidity) + "% / " + String.valueOf(weatherResponse.main.pressure) + " hPa");
                 }
             }
@@ -187,6 +189,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_my_uploads:
                 intent = new Intent(getApplicationContext(), ImagesActivity.class);
+                intent.putExtra("id", view.getId());
+                startActivity(intent);
+                break;
+            case R.id.btn_news:
+                intent = new Intent(getApplicationContext(), BlogActivity.class);
                 intent.putExtra("id", view.getId());
                 startActivity(intent);
                 break;

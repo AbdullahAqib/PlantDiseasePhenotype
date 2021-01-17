@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -17,7 +18,11 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.plantdiseasephenotype.R;
-import com.example.plantdiseasephenotype.utils.Upload;
+import com.example.plantdiseasephenotype.models.FCMDataModel;
+import com.example.plantdiseasephenotype.models.FCMNotificationModel;
+import com.example.plantdiseasephenotype.models.RequestNotification;
+import com.example.plantdiseasephenotype.models.Upload;
+import com.example.plantdiseasephenotype.network.FCM_API;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +39,9 @@ import android.net.Uri;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import okhttp3.ResponseBody;
+import retrofit2.Callback;
+
 public class AskCommunityActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static int PICK_IMAGE_REQUEST = 1;
@@ -41,6 +49,8 @@ public class AskCommunityActivity extends AppCompatActivity implements View.OnCl
     EditText title;
     EditText description;
     ImageView imageView;
+
+    Upload upload;
 
     private ProgressBar mProgressBar;
     private Uri mImageUri;
@@ -139,7 +149,6 @@ public class AskCommunityActivity extends AppCompatActivity implements View.OnCl
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     final Uri downloadUrl = uri;
-                                    Upload upload;
                                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                                     if(description.getText().toString().isEmpty()) {
                                         upload = new Upload(title.getText().toString().trim(),
@@ -151,7 +160,9 @@ public class AskCommunityActivity extends AppCompatActivity implements View.OnCl
                                     String uploadId = mDatabaseRef.push().getKey();
                                     mDatabaseRef.child(uploadId).setValue(upload);
                                     mDatabaseRef.child(uploadId).child("timestamp").setValue(ServerValue.TIMESTAMP);
-                                    Intent intent = new Intent(getApplicationContext(), ImagesActivity.class);
+                                    upload.setKey(uploadId);
+                                    sendNotification();
+                                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -174,4 +185,30 @@ public class AskCommunityActivity extends AppCompatActivity implements View.OnCl
             Toast.makeText(this, "No Image selected", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void sendNotification() {
+
+        FCMNotificationModel notificationModel = new FCMNotificationModel("One new post to see.", "'" + upload.getTitle() + "'");
+        FCMDataModel dataModel = new FCMDataModel(upload.getKey());
+        RequestNotification requestNotificaton = new RequestNotification();
+        requestNotificaton.setNotificationModel(notificationModel);
+        requestNotificaton.setDataModel(dataModel);
+        requestNotificaton.setToken("/topics/post-update");
+
+        FCM_API.FCMService apiService = FCM_API.getClient().create(FCM_API.FCMService.class);
+        retrofit2.Call<ResponseBody> responseBodyCall = apiService.sendNotification(requestNotificaton);
+
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(retrofit2.Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                Log.d("Msg", "Notification done!");
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
 }

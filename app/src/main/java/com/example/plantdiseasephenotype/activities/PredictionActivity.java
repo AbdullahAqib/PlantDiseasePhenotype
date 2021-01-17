@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,13 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.plantdiseasephenotype.utils.ModelClasses;
 import com.example.plantdiseasephenotype.utils.ModelClassesLinks;
 import com.example.plantdiseasephenotype.R;
-import com.example.plantdiseasephenotype.utils.Upload;
+import com.example.plantdiseasephenotype.models.Upload;
 import com.example.plantdiseasephenotype.network.DeepLearningAPI;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,6 +50,7 @@ import org.pytorch.Module;
 import org.pytorch.Tensor;
 import org.pytorch.torchvision.TensorImageUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -65,14 +69,14 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     private static int RESULT_LOAD_IMAGE = 1;
 
     public Uri uri = null;
+    public Uri salmap_uri = null;
     public static String LOG_TAG = "PredictionActivity";
+    int imageHeight, imageWidth;
 
     TextView textView, learnMore;
     ImageView imageView;
-    Button detectButton;
-
-    /* temp */
-    Button callApiBtn;
+    Button button;
+    ProgressBar progressBar;
 
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
@@ -84,20 +88,22 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_prediction);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
 
         imageView = findViewById(R.id.image);
         textView = findViewById(R.id.result_text);
         learnMore = findViewById(R.id.learn_more);
-        detectButton = findViewById(R.id.detect);
-        callApiBtn = findViewById(R.id.callApiBtn);
+        button = findViewById(R.id.button);
+        progressBar = findViewById(R.id.progressbar);
 
         imageView.setOnClickListener(this);
+        button.setOnClickListener(this);
 
         if (getIntent().hasExtra("uri")) {
             uri = Uri.parse(getIntent().getStringExtra("uri"));
-            updateImageBitmap();
+            updateImageBitmap(uri);
+            button.setText("Diagnose My Plant");
         }
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
@@ -182,20 +188,29 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.image:
-                callApiBtn.setVisibility(View.GONE);
                 pickImageFromGallery();
                 break;
-            case R.id.detect:
-                detectImage();
-                break;
-            case R.id.callApiBtn:
-                callAPI();
-                break;
+            case R.id.button:
+                if(button.getText().equals("Open Gallery")){
+                    imageView.performClick();
+                }else if(button.getText().equals("Diagnose My Plant")) {
+                    detectImage();
+                }else if(button.getText().equals("View Saliency Map")){
+                    if(salmap_uri==null) {
+                        callAPI();
+                    }else{
+                        updateImageBitmap(salmap_uri);
+                        button.setText("View Original Image");
+                    }
+                }else if(button.getText().equals("View Original Image")){
+                    updateImageBitmap(uri);
+                    button.setText("View Saliency Map");
+                }
         }
     }
 
     private void callAPI() {
-        Log.i(LOG_TAG, uri.getPath());
+        progressBar.setVisibility(View.VISIBLE);
         File file = new File(uri.getPath());
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
         MultipartBody.Part img =
@@ -213,10 +228,22 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
                             fos.write(response.body().bytes());
                         }
                         File f = new File(getApplicationContext().getFilesDir(), filename);
-                        uri = Uri.fromFile(f);
+                        salmap_uri = Uri.fromFile(f);
+
+                        //Read the image as Bitmap
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), salmap_uri);
+
+                        //Here we reshape the image into 299*299
+                        bitmap = Bitmap.createScaledBitmap(bitmap, imageWidth, imageHeight, true);
+
+                        salmap_uri = getImageUri(getApplicationContext(), bitmap);
+
+                        progressBar.setVisibility(View.GONE);
 
                         // all that just to do this
-                        updateImageBitmap();
+                        updateImageBitmap(salmap_uri);
+
+                        button.setText("View Original Image");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -225,21 +252,34 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
                 Log.e(LOG_TAG, t.toString());
             }
         });
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
     private void detectImage() {
+
         Bitmap bitmap = null;
         Module module = null;
 
+        progressBar.setVisibility(View.VISIBLE);
         //Getting the image from the image view
         try {
+
+            getDropboxIMGSize(uri);
+
             //Read the image as Bitmap
             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
 
-            //Here we reshape the image into 400*400
+            //Here we reshape the image into 299*299
             bitmap = Bitmap.createScaledBitmap(bitmap, 299, 299, true);
 
             //Loading the model file.
@@ -286,10 +326,6 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         //Writing the detected class in to the text view of the layout
         textView.setText(detected_class);
-        detectButton.setOnClickListener(null);
-
-        // show saliency map button
-        callApiBtn.setVisibility(View.VISIBLE);
 
         if (!link.isEmpty()) {
             learnMore.setVisibility(View.VISIBLE);
@@ -307,7 +343,11 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
             });
         }
 
-        uploadFile(detected_class, uri);
+        progressBar.setVisibility(View.GONE);
+
+        button.setText("View Saliency Map");
+
+//        uploadFile(detected_class, uri);
     }
 
     private void pickImageFromGallery() {
@@ -325,17 +365,26 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 uri = result.getUri();
-                updateImageBitmap();
+                salmap_uri = null;
+                updateImageBitmap(uri);
+                button.setText("Diagnose My Plant");
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
     }
 
-    public void updateImageBitmap(){
+    private void getDropboxIMGSize(Uri uri){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(new File(uri.getPath()).getAbsolutePath(), options);
+        imageHeight = options.outHeight;
+        imageWidth = options.outWidth;
+        Log.i("img", String.valueOf(imageWidth)+"x"+String.valueOf(imageHeight));
+    }
+
+    public void updateImageBitmap(Uri uri){
         imageView.setImageURI(uri);
-        detectButton.setOnClickListener(this);
-        callApiBtn.setOnClickListener(this);
     }
 
     private void uploadFile(String title, Uri uri) {

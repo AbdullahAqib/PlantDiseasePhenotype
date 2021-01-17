@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,11 +16,16 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import com.example.plantdiseasephenotype.models.NewsArticle;
+import com.example.plantdiseasephenotype.models.NewsResponse;
 import com.example.plantdiseasephenotype.network.BloggerAPI;
-import com.example.plantdiseasephenotype.utils.BlogsList;
+import com.example.plantdiseasephenotype.models.BlogsList;
 import com.example.plantdiseasephenotype.R;
 import com.example.plantdiseasephenotype.adapters.BlogAdapter;
+import com.example.plantdiseasephenotype.network.NewsAPI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,7 +48,13 @@ public class BlogActivity extends AppCompatActivity implements BottomNavigationV
         navbar.setSelectedItemId(R.id.nav_blogs);
         navbar.setOnNavigationItemSelectedListener(this);
 
-        getBlogList();
+        int id = getIntent().getIntExtra("id", 0);
+
+        if(id==R.id.btn_news){
+            getNewsList();
+        }else{
+            getBlogList();
+        }
     }
 
     public void getBlogList() {
@@ -60,6 +72,27 @@ public class BlogActivity extends AppCompatActivity implements BottomNavigationV
             public void onFailure(Call<BlogsList> call, Throwable t) {
                 Toast.makeText(BlogActivity.this, "Failed to load", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(BlogActivity.this, HomeActivity.class));
+            }
+        });
+    }
+
+    public void getNewsList(){
+        Call<NewsResponse> call = NewsAPI.getNewsService(getApplicationContext()).getLatestNews("agriculture","889f1962d48143bf974b539215eb9e99");
+        call.enqueue(new Callback<NewsResponse>() {
+            @Override
+            public void onResponse(Call<NewsResponse>call, Response<NewsResponse> response) {
+                if(response.body().getStatus().equals("ok")) {
+                    findViewById(R.id.progressbar).setVisibility(View.GONE);
+                    List<NewsArticle> articleList = response.body().getArticles();
+                    if(articleList.size()>0) {
+                        adapter = new BlogAdapter(BlogActivity.this, articleList, true);
+                        recyclerView.setAdapter(adapter);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<NewsResponse>call, Throwable t) {
+
             }
         });
     }

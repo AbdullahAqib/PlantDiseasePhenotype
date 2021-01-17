@@ -1,4 +1,4 @@
-package com.example.plantdiseasephenotype.utils;
+package com.example.plantdiseasephenotype.models;
 
 public class Feedback {
     private String feedback;

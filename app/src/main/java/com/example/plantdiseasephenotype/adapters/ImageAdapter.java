@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.plantdiseasephenotype.activities.ImageDetailActivity;
 import com.example.plantdiseasephenotype.R;
-import com.example.plantdiseasephenotype.utils.Upload;
+import com.example.plantdiseasephenotype.models.Upload;
 
 import java.util.List;
 

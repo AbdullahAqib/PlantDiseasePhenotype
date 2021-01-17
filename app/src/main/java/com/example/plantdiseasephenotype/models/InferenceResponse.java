@@ -1,4 +1,4 @@
-package com.example.plantdiseasephenotype.network;
+package com.example.plantdiseasephenotype.models;
 
 import com.google.gson.annotations.SerializedName;
 

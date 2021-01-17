@@ -1,4 +1,4 @@
-package com.example.plantdiseasephenotype.utils;
+package com.example.plantdiseasephenotype.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

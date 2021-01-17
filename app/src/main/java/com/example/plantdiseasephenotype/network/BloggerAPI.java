@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.example.plantdiseasephenotype.utils.BlogsList;
+import com.example.plantdiseasephenotype.models.BlogsList;
 
 import java.io.IOException;
 

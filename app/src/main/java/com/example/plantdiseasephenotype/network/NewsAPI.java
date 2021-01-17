@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.example.plantdiseasephenotype.models.WeatherResponse;
+import com.example.plantdiseasephenotype.models.NewsResponse;
 
 import java.io.IOException;
 
@@ -19,17 +19,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public class WeatherAPI {
+public class NewsAPI {
+    public static final String BASE_URL = "https://newsapi.org/v2/";
+    private static NewsService newsService = null;
 
-    public static String url = "http://api.openweathermap.org/";
-
-    public static WeatherService weatherService = null;
-
-    public static WeatherService getWeatherService(final Context context){
+    public static NewsService getNewsService(final Context context){
 
         OkHttpClient client = new OkHttpClient
                 .Builder()
-                .cache(new Cache(context.getCacheDir(), 1 * 1024 * 1024)) // 10 MB
+                .cache(new Cache(context.getCacheDir(), 10 * 1024 * 1024)) // 10 MB
                 .addInterceptor(new Interceptor() {
                     @Override public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request();
@@ -43,22 +41,22 @@ public class WeatherAPI {
                 })
                 .build();
 
-
+        if(newsService == null){
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(url)
+                    .baseUrl(BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            weatherService = retrofit.create(WeatherService.class);
+            newsService = retrofit.create(NewsService.class);
+        }
 
-
-        return weatherService;
+        return newsService;
     }
 
-    public interface WeatherService {
-        @GET("data/2.5/weather?")
-        Call<WeatherResponse> getCurrentWeatherData(@Query("lat") String lat, @Query("lon") String lon, @Query("APPID") String app_id);
+    public interface NewsService {
+        @GET("everything")
+        Call<NewsResponse> getLatestNews(@Query("q") String q, @Query("apiKey") String apiKey);
     }
 
     public static boolean isNetworkAvailable(Context context) {

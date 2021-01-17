@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.plantdiseasephenotype.R;
-import com.example.plantdiseasephenotype.utils.Feedback;
+import com.example.plantdiseasephenotype.models.Feedback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

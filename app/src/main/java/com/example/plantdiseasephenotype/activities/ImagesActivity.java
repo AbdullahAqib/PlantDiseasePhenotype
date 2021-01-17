@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.plantdiseasephenotype.R;
-import com.example.plantdiseasephenotype.utils.Upload;
+import com.example.plantdiseasephenotype.models.Upload;
 import com.example.plantdiseasephenotype.adapters.ImageAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;

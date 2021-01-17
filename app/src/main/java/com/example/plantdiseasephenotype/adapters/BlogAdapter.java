@@ -2,6 +2,8 @@ package com.example.plantdiseasephenotype.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.plantdiseasephenotype.activities.DetailActivity;
-import com.example.plantdiseasephenotype.utils.Item;
+import com.example.plantdiseasephenotype.models.Item;
 import com.example.plantdiseasephenotype.R;
+import com.example.plantdiseasephenotype.models.NewsArticle;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,11 +35,20 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHo
     private Context context;
     private List<Item> items;
     private List<Item> allItems;
+    private List<NewsArticle> newsArticles;
+    private Boolean isNews=false;
 
     public BlogAdapter(Context context, List<Item> items) {
         this.context = context;
         this.items = items;
         allItems = new ArrayList<>(items);
+    }
+
+    public BlogAdapter(Context context, List<NewsArticle> newsArticles, Boolean isNews) {
+        Log.i("Msg","news blog constructor");
+        this.context = context;
+        this.newsArticles = newsArticles;
+        this.isNews = isNews;
     }
 
     @NonNull
@@ -49,26 +61,49 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull BlogItemViewHolder holder, int position) {
-        final Item item = items.get(position);
-        holder.blogTitle.setText(item.getTitle());
-        Document document = Jsoup.parse(item.getContent());
-        holder.blogDescription.setText(document.text());
-        Element blogImage = document.select("img").first();
-        String blogImageURL = blogImage.attr("src");
-        Glide.with(context).load(blogImageURL).into(holder.blogImage);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("url", item.getUrl());
-                context.startActivity(intent);
+        if(isNews){
+            final NewsArticle newsArticle = newsArticles.get(position);
+            if(!TextUtils.isEmpty(newsArticle.getTitle())) {
+                holder.blogTitle.setText(newsArticle.getTitle());
             }
-        });
+            if(!TextUtils.isEmpty(newsArticle.getDescription())) {
+                holder.blogDescription.setText(newsArticle.getDescription());
+            }
+            Glide.with(context).load(newsArticle.getUrlToImage()).into(holder.blogImage);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra("url", newsArticle.getUrl());
+                    context.startActivity(intent);
+                }
+            });
+        }else {
+            final Item item = items.get(position);
+            holder.blogTitle.setText(item.getTitle());
+            Document document = Jsoup.parse(item.getContent());
+            holder.blogDescription.setText(document.text());
+            Element blogImage = document.select("img").first();
+            String blogImageURL = blogImage.attr("src");
+            Glide.with(context).load(blogImageURL).into(holder.blogImage);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra("url", item.getUrl());
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
+        if(isNews){
+            return newsArticles.size();
+        }
         return items.size();
     }
 

@@ -1,5 +1,7 @@
 package com.example.plantdiseasephenotype.network;
 
+import com.example.plantdiseasephenotype.models.InferenceResponse;
+
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -21,7 +23,7 @@ public class DeepLearningAPI {
         Call<ResponseBody> getSaliencyMap(@Part MultipartBody.Part img);
     }
 
-    public static String baseUrl = "http://192.168.10.16:5000/";
+    public static String baseUrl = "http://192.168.10.6:5000/";
 
     public static DeepLearningService getDeepLearningService() {
         Retrofit retrofit = new Retrofit.Builder()
