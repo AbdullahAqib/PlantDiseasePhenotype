@@ -41,7 +41,6 @@ public class NewsAPI {
                 })
                 .build();
 
-        if(newsService == null){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(client)
@@ -49,7 +48,6 @@ public class NewsAPI {
                     .build();
 
             newsService = retrofit.create(NewsService.class);
-        }
 
         return newsService;
     }

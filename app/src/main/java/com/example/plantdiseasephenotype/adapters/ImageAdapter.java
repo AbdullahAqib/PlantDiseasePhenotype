@@ -44,7 +44,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         if(uploadCurrent.getCommentCount()==-1){
             holder.commentCount.setVisibility(View.GONE);
             holder.removeClickListener();
-            holder.changeColors();
+//            holder.changeColors();
             }else {
             holder.commentCount.setText(String.valueOf(uploadCurrent.getCommentCount()) + " Comments");
         }

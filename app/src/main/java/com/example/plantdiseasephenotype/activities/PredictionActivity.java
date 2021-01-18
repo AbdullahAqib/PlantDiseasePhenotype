@@ -347,12 +347,10 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         button.setText("View Saliency Map");
 
-//        uploadFile(detected_class, uri);
+        uploadFile(detected_class, uri);
     }
 
     private void pickImageFromGallery() {
-        textView.setText("");
-        learnMore.setVisibility(View.GONE);
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
@@ -367,6 +365,8 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
                 uri = result.getUri();
                 salmap_uri = null;
                 updateImageBitmap(uri);
+                textView.setText("");
+                learnMore.setVisibility(View.GONE);
                 button.setText("Diagnose My Plant");
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();

@@ -36,6 +36,7 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHo
     private List<Item> items;
     private List<Item> allItems;
     private List<NewsArticle> newsArticles;
+    private List<NewsArticle> allNewsArticles;
     private Boolean isNews=false;
 
     public BlogAdapter(Context context, List<Item> items) {
@@ -45,9 +46,9 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHo
     }
 
     public BlogAdapter(Context context, List<NewsArticle> newsArticles, Boolean isNews) {
-        Log.i("Msg","news blog constructor");
         this.context = context;
         this.newsArticles = newsArticles;
+        allNewsArticles = new ArrayList<>(newsArticles);
         this.isNews = isNews;
     }
 
@@ -127,25 +128,47 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogItemViewHo
     private Filter exampleFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<Item> filteredList = new ArrayList<>();
-            if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(allItems);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                for (Item item : allItems) {
-                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(item);
+
+            FilterResults results = new FilterResults();
+
+            if(isNews){
+                List<NewsArticle> filteredList = new ArrayList<>();
+                if (constraint == null || constraint.length() == 0) {
+                    filteredList.addAll(allNewsArticles);
+                } else {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (NewsArticle item : allNewsArticles) {
+                        if (item.getTitle().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
                     }
                 }
+                results.values = filteredList;
+            }else {
+                List<Item> filteredList = new ArrayList<>();
+                if (constraint == null || constraint.length() == 0) {
+                    filteredList.addAll(allItems);
+                } else {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (Item item : allItems) {
+                        if (item.getTitle().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+                results.values = filteredList;
             }
-            FilterResults results = new FilterResults();
-            results.values = filteredList;
             return results;
         }
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            items.clear();
-            items.addAll((List) results.values);
+            if(isNews){
+                newsArticles.clear();
+                newsArticles.addAll((List) results.values);
+            }else{
+                items.clear();
+                items.addAll((List) results.values);
+            }
             notifyDataSetChanged();
         }
     };

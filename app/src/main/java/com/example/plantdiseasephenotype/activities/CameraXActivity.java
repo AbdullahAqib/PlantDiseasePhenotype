@@ -24,12 +24,20 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.plantdiseasephenotype.R;
+import com.example.plantdiseasephenotype.dialogs.CameraInstructionsDialog;
+import com.example.plantdiseasephenotype.dialogs.ConfirmEmailDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
@@ -72,6 +80,8 @@ public class CameraXActivity extends AppCompatActivity implements BottomNavigati
         BottomNavigationView navbar = (BottomNavigationView) findViewById(R.id.navbar);
         navbar.setSelectedItemId(R.id.nav_camera);
         navbar.setOnNavigationItemSelectedListener(this);
+
+        cameraInstrcutionsDialog();
     }
 
     private void takePhoto() {
@@ -208,5 +218,15 @@ public class CameraXActivity extends AppCompatActivity implements BottomNavigati
                 return true;
         }
         return false;
+    }
+
+    private void cameraInstrcutionsDialog() {
+
+        CameraInstructionsDialog dialog = new CameraInstructionsDialog(CameraXActivity.this);
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
     }
 }

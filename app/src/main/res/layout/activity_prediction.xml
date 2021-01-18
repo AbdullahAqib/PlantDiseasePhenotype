@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/register_background"
+    android:background="@mipmap/prediction_background"
     tools:context=".activities.PredictionActivity">
 
     <ScrollView
@@ -52,10 +52,10 @@
                 android:text="Learn More"
                 android:textAlignment="center"
                 android:textAllCaps="true"
-                android:textColor="#4499FF"
-                android:textSize="12sp"
+                android:textColor="#000000"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                 android:visibility="gone"/>
 
             <Button
                 android:id="@+id/button"

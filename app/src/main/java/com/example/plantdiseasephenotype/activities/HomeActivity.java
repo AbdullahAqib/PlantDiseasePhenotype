@@ -137,7 +137,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     Glide.with(getApplicationContext()).load("http://openweathermap.org/img/w/" + weatherResponse.weather.get(0).icon + ".png").into(weather_icon);
                     txt_temperature.setText(String.valueOf(Math.round(weatherResponse.main.temp - 273.15)) + "° C");
-                    txt_hum_pres.setText(String.valueOf(weatherResponse.main.humidity) + "% / " + String.valueOf(weatherResponse.main.pressure) + " hPa");
+                    txt_hum_pres.setText(String.valueOf(weatherResponse.main.humidity) + "% / " + String.valueOf(weatherResponse.main.pressure) + "hPa");
                 }
             }
 

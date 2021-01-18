@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PlantVillage</string>
+    <string name="app_name">Plant Village</string>
 
     <string name="input_error_name">name required</string>
     <string name="input_error_email">email required</string>

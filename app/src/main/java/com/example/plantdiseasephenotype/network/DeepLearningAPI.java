@@ -23,7 +23,7 @@ public class DeepLearningAPI {
         Call<ResponseBody> getSaliencyMap(@Part MultipartBody.Part img);
     }
 
-    public static String baseUrl = "http://192.168.10.6:5000/";
+    public static String baseUrl = "http://192.168.10.27:5000/";
 
     public static DeepLearningService getDeepLearningService() {
         Retrofit retrofit = new Retrofit.Builder()
