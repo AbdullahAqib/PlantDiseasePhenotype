@@ -7,6 +7,7 @@ public class ModelClassesLinks {
             "https://plantdiseasephenotype.blogspot.com/2020/11/apple-cedar-rust.html",
             "",
             "",
+            "",
             "https://plantdiseasephenotype.blogspot.com/2020/11/cherry-powdery-mildrew.html",
             "",
             "https://plantdiseasephenotype.blogspot.com/2020/11/corn-gray-leaf-spot.html",

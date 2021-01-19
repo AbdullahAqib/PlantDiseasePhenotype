@@ -6,6 +6,7 @@ public class ModelClasses {
             "Apple Black Rot",
             "Apple Cedar Rust",
             "Apple Healthy",
+            "No Leaf",
             "Blueberry Healthy",
             "Cherry Powdery Mildew",
             "Cherry Healthy",

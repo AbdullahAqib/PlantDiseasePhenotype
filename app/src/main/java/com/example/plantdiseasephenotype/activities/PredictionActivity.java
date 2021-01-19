@@ -191,18 +191,18 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
                 pickImageFromGallery();
                 break;
             case R.id.button:
-                if(button.getText().equals("Open Gallery")){
+                if (button.getText().equals("Open Gallery")) {
                     imageView.performClick();
-                }else if(button.getText().equals("Diagnose My Plant")) {
+                } else if (button.getText().equals("Diagnose My Plant")) {
                     detectImage();
-                }else if(button.getText().equals("View Saliency Map")){
-                    if(salmap_uri==null) {
+                } else if (button.getText().equals("View Saliency Map")) {
+                    if (salmap_uri == null) {
                         callAPI();
-                    }else{
+                    } else {
                         updateImageBitmap(salmap_uri);
                         button.setText("View Original Image");
                     }
-                }else if(button.getText().equals("View Original Image")){
+                } else if (button.getText().equals("View Original Image")) {
                     updateImageBitmap(uri);
                     button.setText("View Saliency Map");
                 }
@@ -215,7 +215,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
         MultipartBody.Part img =
                 MultipartBody.Part.createFormData("img", file.getName(), requestBody);
-                // "img" is what server is expecting
+        // "img" is what server is expecting
         DeepLearningAPI.DeepLearningService apiService = DeepLearningAPI.getDeepLearningService();
         Call<ResponseBody> call = apiService.getSaliencyMap(img);
         call.enqueue(new Callback<ResponseBody>() {
@@ -345,9 +345,11 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         progressBar.setVisibility(View.GONE);
 
-        button.setText("View Saliency Map");
+        if (detected_class != "No leaf") {
+            button.setText("View Saliency Map");
+            uploadFile(detected_class, uri);
+        }
 
-        uploadFile(detected_class, uri);
     }
 
     private void pickImageFromGallery() {
@@ -374,54 +376,54 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void getDropboxIMGSize(Uri uri){
+    private void getDropboxIMGSize(Uri uri) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(new File(uri.getPath()).getAbsolutePath(), options);
         imageHeight = options.outHeight;
         imageWidth = options.outWidth;
-        Log.i("img", String.valueOf(imageWidth)+"x"+String.valueOf(imageHeight));
+        Log.i("img", String.valueOf(imageWidth) + "x" + String.valueOf(imageHeight));
     }
 
-    public void updateImageBitmap(Uri uri){
+    public void updateImageBitmap(Uri uri) {
         imageView.setImageURI(uri);
     }
 
     private void uploadFile(String title, Uri uri) {
 
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
-                    + ".jpg");
-            mUploadTask = fileReference.putFile(uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(PredictionActivity.this, "History Updated", Toast.LENGTH_LONG).show();
-                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    final Uri downloadUrl = uri;
-                                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                                    Upload upload = new Upload(title,
-                                                downloadUrl.toString(), firebaseUser.getUid());
-                                    String uploadId = mDatabaseRef.push().getKey();
-                                    mDatabaseRef.child(uploadId).setValue(upload);
-                                    mDatabaseRef.child(uploadId).child("timestamp").setValue(ServerValue.TIMESTAMP);
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(PredictionActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+        StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+                + ".jpg");
+        mUploadTask = fileReference.putFile(uri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(PredictionActivity.this, "History Updated", Toast.LENGTH_LONG).show();
+                        fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final Uri downloadUrl = uri;
+                                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                Upload upload = new Upload(title,
+                                        downloadUrl.toString(), firebaseUser.getUid());
+                                String uploadId = mDatabaseRef.push().getKey();
+                                mDatabaseRef.child(uploadId).setValue(upload);
+                                mDatabaseRef.child(uploadId).child("timestamp").setValue(ServerValue.TIMESTAMP);
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PredictionActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
-                        }
-                    });
+                    }
+                });
     }
 
 }
