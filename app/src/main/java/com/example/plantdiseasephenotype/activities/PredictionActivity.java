@@ -345,7 +345,7 @@ public class PredictionActivity extends AppCompatActivity implements View.OnClic
 
         progressBar.setVisibility(View.GONE);
 
-        if (detected_class != "No leaf") {
+        if (detected_class != "No Leaf") {
             button.setText("View Saliency Map");
             uploadFile(detected_class, uri);
         }
